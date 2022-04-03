@@ -3,4 +3,4 @@ node_modules/
 *.gitattributes
 *.gitignore
 *.json
-
+.DS_Store
