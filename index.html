@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>EuconetAPIClient</title>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    
+    
+    <body>
+        <div id="cpuChartdiv">
+            <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
+            <div id="cpuHeading_text">CPU usage</div>
+
+            <canvas id="cpuchart" width="1000px" height="200px"></canvas>
+            <script>
+                var labels = [];
+                var values = [];
+                var avg_cpu_usage
+
+            
+                var rawFile = new XMLHttpRequest();
+                rawFile.open("GET", "JSONStorage.json", false);
+                rawFile.onreadystatechange = function () {
+                    if(rawFile.readyState === 4) {
+                        if(rawFile.status === 200 || rawFile.status == 0) {
+                            recievedJSON = JSON.parse(rawFile.responseText);
+                            var keys = Object.keys(recievedJSON);
+                            for (let i = 0; i < keys.length; i++) {
+                                var currentJSON = JSON.parse(recievedJSON[i]);
+                                values.push(currentJSON["cpu_usage"]);
+                                labels.push(currentJSON["time"]);
+                            }
+
+                            var sum = values.reduce((partialSum, a) => partialSum + a, 0, sum = parseFloat(sum).toFixed(2))
+                            avg_cpu_usage = sum / values.length;
+                            avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
+                            
+                            console.log(labels);
+                            console.log(values);
+                        }
+                    }
+                }
+
+                rawFile.send(null);
+                
+                
+                //document.write("Average CPU usage: " + avg_cpu_usage)
+                
+                
+                
+                var ctx = document.getElementById("cpuchart").getContext("2d");
+                var cpuchartelement = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "CPU usage",
+                            data: values,
+                            backgroundColor: "green",
+                            tension: 0.3
+                        }],
+                        borderWidth: 0
+                    },
+
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 100
+                            }
+                        }
+                    }
+                })
+            </script>
+
+        </div>
+    </body>
+</html>
