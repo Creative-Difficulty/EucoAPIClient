@@ -1,19 +1,36 @@
 import fs from "fs"
 import fetch from 'node-fetch'
 
+var cleared = false
+let toWriteArray = []
 var recievedJSON
 var jsonTime
-var jsonCpuUsage
+
 var jsonRAM
 var jsonTotalRAM
 var jsonUsedRAM
 var jsonFreeRAM
-var cleared = false
-let result = []
+
+var jsonCpuUsage
 var jsonCPUinfo
 var jsonCPUmodel
 var jsonCPUCores
 var jsonCPUSpeed
+
+var jsonStorage
+var jsonStorageCapacity
+var jsonUsedStorage
+var jsonFreeStorage
+
+var jsonOSinfo
+var jsonOSname
+var jsonOSVersion
+var jsonOSarchitecture
+var jsonOSlocalIP
+var jsonOStextEncoding
+var jsonOSserialnumber
+var jsonOSuefiboolean
+
 setInterval(fetchJSON, 2000)
 
 
@@ -38,6 +55,20 @@ async function fetchJSON() {
         jsonCPUCores = jsonCPUinfo[1]
         jsonCPUmodel = jsonCPUCores["model"]
         jsonCPUSpeed = jsonCPUCores["speed"]
+
+        jsonStorage = recievedJSON["storage_info"]
+        jsonStorageCapacity = jsonStorage["totalGb"]
+        jsonUsedStorage = jsonStorage["usedGb"]
+        jsonFreeStorage = jsonStorage["freeGb"]
+
+        jsonOSinfo = recievedJSON["os_version"]
+        jsonOSname = jsonOSinfo["codename"]
+        jsonOSVersion = jsonOSinfo["release"]
+        jsonOSarchitecture = jsonOSinfo["arch"]
+        jsonOSlocalIP = jsonOSinfo["hostname"]
+        jsonOStextEncoding = jsonOSinfo["codepage"]
+        jsonOSserialnumber = jsonOSinfo["serial"]
+        jsonOSuefiboolean = jsonOSinfo["uefi"]
         
     })
 
@@ -48,10 +79,19 @@ async function fetchJSON() {
         "cpu_usage": jsonCpuUsage,
         "total_ram": jsonTotalRAM,
         "used_ram": jsonUsedRAM,
-        "free_ram": jsonFreeRAM
+        "free_ram": jsonFreeRAM,
+        "total_storageGB": jsonStorageCapacity,
+        "free_storageGB": jsonFreeStorage,
+        "used_storageGB": jsonUsedStorage,
+        "os_name": jsonOSname,
+        "os_version": jsonOSVersion,
+        "os_architecture": jsonOSarchitecture,
+        "local_ip": jsonOSlocalIP,
+        "pc_serial_number": jsonOSserialnumber,
+        "uefi_is_enabled": jsonOSuefiboolean
     })
 
-    result.push(parseableJSON)
+    toWriteArray.push(parseableJSON)
 
-    fs.writeFileSync("JSONStorage.json", JSON.stringify(result, null, 4))
+    fs.writeFileSync("JSONStorage.json", JSON.stringify(toWriteArray, null, 4))
 }
