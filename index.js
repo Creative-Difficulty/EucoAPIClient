@@ -1,51 +1,57 @@
 import fs from "fs"
 import fetch from 'node-fetch'
-import exit from "process"
-import readline from 'readline'
-import os from 'os'
-import stringify from "querystring"
 
 var recievedJSON
 var jsonTime
-var jsonCpu
+var jsonCpuUsage
+var jsonRAM
+var jsonTotalRAM
+var jsonUsedRAM
+var jsonFreeRAM
 var cleared = false
 let result = []
-var JSONInterval = setInterval(fetchJSON, 2000)
+var jsonCPUinfo
+var jsonCPUmodel
+var jsonCPUCores
+var jsonCPUSpeed
+setInterval(fetchJSON, 2000)
 
-
-readline.emitKeypressEvents(process.stdin);
-
-
-if (process.stdin.isTTY) {
-    process.stdin.setRawMode(true);
-}
-
-console.log("Press q to stop EucoAPIClient at any time! \nWARNING: IF YOU STOP EUCOAPICLIENT FROM RUNNING IN ANY OTHER WAY, CHANGES WILL BE SAVED IMPROPERLY!")
-
-
-function clearFile(file) {
-    fs.truncate(file, 0, function(){})
-}
-  
 
 async function fetchJSON() {
     if(cleared == false) {
-        clearFile("JSONStorage.json")
+        fs.truncate("JSONStorage.json", 0, function () { })
         cleared = true
     }
     
-    await fetch("http://localhost:8080/1").then(jsonData => jsonData.json()).then(jsonData => {
+    await fetch("http://localhost:5050/1").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
+
         jsonTime = recievedJSON["time"]
-        jsonCpu = recievedJSON["cpu_usage"]
+        jsonCpuUsage = recievedJSON["cpu_usage"]
+
+        jsonRAM = recievedJSON["RAM"]
+        jsonTotalRAM = jsonRAM["totalMemMb"]
+        jsonUsedRAM = jsonRAM["usedMemMb"]
+        jsonFreeRAM = jsonRAM["freeMemMb"]
+
+        jsonCPUinfo = recievedJSON["cpu_type"]
+        jsonCPUCores = jsonCPUinfo[1]
+        jsonCPUmodel = jsonCPUCores["model"]
+        jsonCPUSpeed = jsonCPUCores["speed"]
+        
     })
 
-    var parseableJSON2 = JSON.stringify({
+    var parseableJSON = JSON.stringify({
         "time": jsonTime,
-        "cpu_usage": jsonCpu
+        "cpu_model": jsonCPUmodel,
+        "cpu_speed": jsonCPUSpeed,
+        "cpu_usage": jsonCpuUsage,
+        "total_ram": jsonTotalRAM,
+        "used_ram": jsonUsedRAM,
+        "free_ram": jsonFreeRAM
     })
 
-    result.push(parseableJSON2)
+    result.push(parseableJSON)
 
     fs.writeFileSync("JSONStorage.json", JSON.stringify(result, null, 4))
 }
