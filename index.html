@@ -6,12 +6,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>EuconetAPIClient</title>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
         <link rel="stylesheet" href="style.css">
     </head>
     
     
     <body>
-        <div id="cpuChartdiv">
+        <div id="cpuInfodiv">
             <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
             <div id="cpuHeading_text">CPU usage</div>
 
@@ -60,13 +62,45 @@
                         datasets: [{
                             label: "CPU usage",
                             data: values,
-                            backgroundColor: "green",
-                            tension: 0.3
+                            fill: false,
+                            borderColor: "#bae755",
+                            backgroundColor: "#bae755",
+                            tension: 0
                         }],
-                        borderWidth: 0
                     },
 
                     options: {
+                        datasets: {
+                            line: {
+                                pointRadius: 2
+                            }
+                        },
+                        elements: {
+                            point: {
+                                radius: 0
+                            }
+                        },
+                        plugins: {
+                            zoom: {
+                                pan:{
+                                    enabled: true,
+                                    mode: "xy"
+                                },
+                                zoom: {
+                                    wheel: {
+                                        enabled: true,
+                                    },
+                                    pinch: {
+                                        enabled: true
+                                    },
+                                    mode: 'xy'
+                                },
+                                limits: {
+                                    y: {min: 0, max: 100},
+                                }
+                            }
+                        },
+                        animation: false,
                         responsive: true,
                         scales: {
                             y: {
@@ -77,8 +111,12 @@
                         }
                     }
                 })
-            </script>
 
+                function resetcpuChartZoom() {
+                    cpuchartelement.resetZoom();
+                }
+            </script>
+            <button id="cpuInfoZoomBtn"  onclick="resetcpuChartZoom()">Reset Zoom</button>
         </div>
     </body>
 </html>

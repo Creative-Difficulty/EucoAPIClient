@@ -31,6 +31,7 @@ var jsonOStextEncoding
 var jsonOSserialnumber
 var jsonOSuefiboolean
 
+fetch("http://localhost:5050/1")
 setInterval(fetchJSON, 2000)
 
 
