@@ -14,8 +14,12 @@
     
     <body>
         <div id="cpuInfodiv">
-            <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
-            <div id="cpuHeading_text">CPU usage</div>
+            <div id="cpuHeading">
+                <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
+                <div id="cpuHeading_text">CPU usage</div>
+            </div>
+            
+            <div id="cpuModel"></div>
 
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
             <script>
@@ -35,6 +39,7 @@
                                 var currentJSON = JSON.parse(recievedJSON[i]);
                                 values.push(currentJSON["cpu_usage"]);
                                 labels.push(currentJSON["time"]);
+                                document.getElementById("cpuModel").innerHTML = "New text!";
                             }
 
                             var sum = values.reduce((partialSum, a) => partialSum + a, 0, sum = parseFloat(sum).toFixed(2))
@@ -64,20 +69,20 @@
                             data: values,
                             fill: false,
                             borderColor: "#bae755",
+                            borderWidth : 0.7,
                             backgroundColor: "#bae755",
                             tension: 0
                         }],
                     },
 
                     options: {
+                        pan: {
+                            enabled: true,
+                            mode: 'x',
+                        },
                         datasets: {
                             line: {
-                                pointRadius: 2
-                            }
-                        },
-                        elements: {
-                            point: {
-                                radius: 0
+                                pointRadius: 1
                             }
                         },
                         plugins: {
@@ -100,7 +105,7 @@
                                 }
                             }
                         },
-                        animation: false,
+                        animation: true,
                         responsive: true,
                         scales: {
                             y: {
