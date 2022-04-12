@@ -20,14 +20,14 @@
             </div>
             
             <div id="cpuModel"></div>
-
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
+            <div id="avg_cpu_usage"></div>
             <script>
                 var labels = [];
                 var values = [];
                 var avg_cpu_usage
-
-            
+                
+                
                 var rawFile = new XMLHttpRequest();
                 rawFile.open("GET", "JSONStorage.json", false);
                 rawFile.onreadystatechange = function () {
@@ -41,21 +41,19 @@
                                 labels.push(currentJSON["time"]);
                                 document.getElementById("cpuModel").innerHTML = "New text!";
                             }
-
+                            
                             var sum = values.reduce((partialSum, a) => partialSum + a, 0, sum = parseFloat(sum).toFixed(2))
                             avg_cpu_usage = sum / values.length;
                             avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
+                            documente.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
                             
-                            console.log(labels);
-                            console.log(values);
                         }
                     }
                 }
-
+                
                 rawFile.send(null);
                 
                 
-                //document.write("Average CPU usage: " + avg_cpu_usage)
                 
                 
                 
@@ -74,7 +72,7 @@
                             tension: 0
                         }],
                     },
-
+                    
                     options: {
                         pan: {
                             enabled: true,
@@ -116,12 +114,12 @@
                         }
                     }
                 })
-
+                
                 function resetcpuChartZoom() {
                     cpuchartelement.resetZoom();
                 }
-            </script>
+                </script>
             <button id="cpuInfoZoomBtn"  onclick="resetcpuChartZoom()">Reset Zoom</button>
         </div>
     </body>
-</html>
+    </html>
