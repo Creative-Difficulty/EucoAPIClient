@@ -32,6 +32,9 @@ body {
 }
 
 #cpuInfodiv #cpuModel {
-  padding-top: 50px;
   float: left;
+}
+
+#cpuInfodiv #avg_cpu_usage {
+  
 }
