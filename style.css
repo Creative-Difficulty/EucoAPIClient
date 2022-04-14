@@ -11,7 +11,7 @@ body {
   -o-user-select: none;
   -ms-user-select: none;
 }
-#cpuInfodiv #cpuHeading #cpuHeading_svg {
+#cpuInfodiv #cpuHeading_svg {
   overflow: hidden;
   margin-right: 15px;
   float: left;
@@ -21,7 +21,7 @@ body {
   pointer-events: none;
 }
 
-#cpuInfodiv #cpuHeading #cpuHeading_text {
+#cpuInfodiv #cpuHeading_text {
   float: left;
   margin-top: 8px;
   font-size: 30px;

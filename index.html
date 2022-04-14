@@ -15,16 +15,13 @@
     <body>
         <div id="cpuInfodiv">
 
-            <div id="cpuHeading">
                 <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
                 <div id="cpuHeading_text">CPU usage</div>
-            </div>
             
-            <div id="cpuModel">
-
-            </div>
+            <div id="cpuModel"> </div>
             <div id="avg_cpu_usage"></div>
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
+            
             <script>
                 var labels = [];
                 var values = [];
@@ -40,9 +37,12 @@
                             var keys = Object.keys(recievedJSON);
                             for (let i = 0; i < keys.length; i++) {
                                 var currentJSON = JSON.parse(recievedJSON[i]);
+                                if(i === 0) {
+                                    var cpu_model = currentJSON["cpu_model"].replace("(R)", "&reg;").replace("(TM)", "&trade;")
+                                    document.getElementById("cpuModel").innerHTML = "CPU Model: " + cpu_model;
+                                }
                                 values.push(currentJSON["cpu_usage"]);
                                 labels.push(currentJSON["time"]);
-                                document.getElementById("cpuModel").innerHTML = "New text!";
                             }
                             
                             var sum = values.reduce((partialSum, a) => partialSum + a, 0, sum = parseFloat(sum).toFixed(2))
@@ -74,7 +74,7 @@
                             backgroundColor: "#bae755",
                             tension: 0,
                             pointRadius: 1,
-                            pointHitRadius: 30
+                            pointHitRadius: 300
                         }],
                     },
                     
