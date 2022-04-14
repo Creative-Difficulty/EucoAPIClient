@@ -11,7 +11,7 @@ body {
   -o-user-select: none;
   -ms-user-select: none;
 }
-#cpuInfodiv #cpuHeading_svg {
+#cpudiv #cpuHeading_svg {
   overflow: hidden;
   margin-right: 15px;
   float: left;
@@ -21,20 +21,17 @@ body {
   pointer-events: none;
 }
 
-#cpuInfodiv #cpuHeading_text {
+#cpudiv #cpuHeading_text {
   float: left;
   margin-top: 8px;
   font-size: 30px;
   font-family: "Roboto", sans-serif;
-  padding-bottom: 50px;
   cursor: default;
   pointer-events: none;
 }
 
-#cpuInfodiv #cpuModel {
-  float: left;
-}
 
-#cpuInfodiv #avg_cpu_usage {
-  
+
+#cpudiv #cpu_params {
+  padding-top: 70px;
 }

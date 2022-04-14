@@ -13,19 +13,22 @@
     
     
     <body>
-        <div id="cpuInfodiv">
+        <div id="cpudiv">
 
-                <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
-                <div id="cpuHeading_text">CPU usage</div>
-            
-            <div id="cpuModel"> </div>
-            <div id="avg_cpu_usage"></div>
+            <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
+            <div id="cpuHeading_text">CPU</div>
+            <div id="cpu_params">
+                <div id="cpu_model"> </div>
+                <div id="avg_cpu_usage"></div>
+                <div id="max_cpu_speed"></div>
+                <div id="cpu_speed"></div>
+            </div>
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
             
             <script>
                 var labels = [];
                 var values = [];
-                var avg_cpu_usage
+                
                 
                 
                 var rawFile = new XMLHttpRequest();
@@ -39,16 +42,28 @@
                                 var currentJSON = JSON.parse(recievedJSON[i]);
                                 if(i === 0) {
                                     var cpu_model = currentJSON["cpu_model"].replace("(R)", "&reg;").replace("(TM)", "&trade;")
-                                    document.getElementById("cpuModel").innerHTML = "CPU Model: " + cpu_model;
+                                    document.getElementById("cpu_model").innerHTML = "CPU Model: " + cpu_model;
+                                    var cpu_speed = currentJSON["cpu_speed"]
+                                    document.getElementById("cpu_speed").innerHTML = "CPU Speed: " + cpu_speed + "MHz";
                                 }
                                 values.push(currentJSON["cpu_usage"]);
                                 labels.push(currentJSON["time"]);
                             }
                             
-                            var sum = values.reduce((partialSum, a) => partialSum + a, 0, sum = parseFloat(sum).toFixed(2))
-                            avg_cpu_usage = sum / values.length;
-                            avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
+                            var roundedValues = values.map(function(each_element){
+                                return Number(each_element.toFixed(0));
+                            });
+
+                            var maxRoundedCpuUsage = Math.max.apply(null, roundedValues)
+                            var indexOfMaxCPUusage = roundedValues.indexOf(maxRoundedCpuUsage)
+                            var PositionInrealValues = values[indexOfMaxCPUusage]
+
+                            var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
+                            var avg_cpu_usage = sumOfValues / values.length;
+
+                            var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
                             document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
+                            document.getElementById("max_cpu_speed").innerHTML = "Maximum CPU usage: " + PositionInrealValues + "%"
                             
                         }
                     }
