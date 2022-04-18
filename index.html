@@ -20,7 +20,8 @@
             <div id="cpu_params">
                 <div id="cpu_model"> </div>
                 <div id="avg_cpu_usage"></div>
-                <div id="max_cpu_speed"></div>
+                <div id="max_cpu_usage"></div>
+                <div id="min_cpu_usage"></div>
                 <div id="cpu_speed"></div>
             </div>
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
@@ -54,16 +55,20 @@
                                 return Number(each_element.toFixed(0));
                             });
 
-                            var maxRoundedCpuUsage = Math.max.apply(null, roundedValues)
-                            var indexOfMaxCPUusage = roundedValues.indexOf(maxRoundedCpuUsage)
-                            var PositionInrealValues = values[indexOfMaxCPUusage]
+                            var roundedLabels = values.map(function(each_element){
+                                return Number(each_element.toFixed(0));
+                            });
+
+                            var maxCPUusage = values[roundedValues.indexOf(Math.max.apply(null, roundedValues))]
+                            var minCPUusage = values[roundedValues.indexOf(Math.min.apply(null, roundedValues))]
 
                             var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
                             var avg_cpu_usage = sumOfValues / values.length;
 
                             var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
                             document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
-                            document.getElementById("max_cpu_speed").innerHTML = "Maximum CPU usage: " + PositionInrealValues + "%"
+                            document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "%"
+                            document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "%"
                             
                         }
                     }
@@ -121,12 +126,12 @@
                         }
                     }
                 })
-                
-                function resetcpuChartZoom() {
+
+                function resetChartZoom() {
                     cpuchartelement.resetZoom();
                 }
                 </script>
-            <button id="cpuInfoZoomBtn"  onclick="resetcpuChartZoom()">Reset Zoom</button>
+            <button id="cpuInfoZoomBtn"  onclick="resetChartZoom()">Reset Zoom</button>
         </div>
     </body>
     </html>
