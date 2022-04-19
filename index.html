@@ -51,24 +51,19 @@
                                 labels.push(currentJSON["time"]);
                             }
                             
-                            var roundedValues = values.map(function(each_element){
-                                return Number(each_element.toFixed(0));
-                            });
 
-                            var roundedLabels = values.map(function(each_element){
-                                return Number(each_element.toFixed(0));
-                            });
-
-                            var maxCPUusage = values[roundedValues.indexOf(Math.max.apply(null, roundedValues))]
-                            var minCPUusage = values[roundedValues.indexOf(Math.min.apply(null, roundedValues))]
+                            var maxCPUusage = Math.max.apply(null, values)
+                            var minCPUusage = Math.min.apply(null, values)
+                            var TimeAtmaxCpuUsage = labels[values.indexOf(Math.max.apply(null, values))]
+                            var TimeAtminCpuUsage = labels[values.indexOf(Math.min.apply(null, values))]
 
                             var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
                             var avg_cpu_usage = sumOfValues / values.length;
 
                             var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
                             document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
-                            document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "%"
-                            document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "%"
+                            document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage
+                            document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage
                             
                         }
                     }
@@ -131,7 +126,7 @@
                     cpuchartelement.resetZoom();
                 }
                 </script>
-            <button id="cpuInfoZoomBtn"  onclick="resetChartZoom()">Reset Zoom</button>
+            <button id="cpuInfoZoomBtn"  onclick="resetcpuChartZoom()">Reset Zoom</button>
         </div>
     </body>
     </html>

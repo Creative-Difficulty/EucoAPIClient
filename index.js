@@ -1,9 +1,13 @@
 import fs from "fs"
-import fetch from 'node-fetch'
+import fetch from "node-fetch"
+import JsonDB from "node-json-db"
+import Config from "node-json-db/dist/lib/JsonDBConfig"
 
-var cleared = false
-let toWriteArray = []
+var LoggingDB = new JsonDB(new Config("JSONStorage.json", true, false, '/'));
+
 var recievedJSON
+var parseableJSON
+
 var jsonTime
 
 var jsonRAM
@@ -32,15 +36,16 @@ var jsonOSserialnumber
 var jsonOSuefiboolean
 
 fetch("http://localhost:5050/1")
+fs.truncate("JSONStorage.json", 0, function () { })
+
 setInterval(fetchJSON, 2000)
 
+fs.appendFile("JSONStorage.json", "[", null, function (err) {
+    if (err) throw err;
+    console.log('It\'s saved!');
+});
 
 async function fetchJSON() {
-    if(cleared == false) {
-        fs.truncate("JSONStorage.json", 0, function () { })
-        cleared = true
-    }
-    
     await fetch("http://localhost:5050/1").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
 
@@ -73,7 +78,7 @@ async function fetchJSON() {
         
     })
 
-    var parseableJSON = JSON.stringify({
+    parseableJSON = JSON.stringify({
         "time": jsonTime,
         "cpu_model": jsonCPUmodel,
         "cpu_speed": jsonCPUSpeed,
@@ -92,7 +97,45 @@ async function fetchJSON() {
         "uefi_is_enabled": jsonOSuefiboolean
     })
 
-    toWriteArray.push(parseableJSON)
-
-    fs.writeFileSync("JSONStorage.json", JSON.stringify(toWriteArray, null, 4))
+    await fs.appendFile("JSONStorage.json", JSON.stringify(parseableJSON), null, function (err) {
+        if (err) throw err;
+        console.log('It\'s saved!');
+    });
+    await fs.appendFile("JSONStorage.json", ",", null, function (err) {
+        if (err) throw err;
+    });
 }
+
+
+process.on("exit", (code) => {
+    fs.appendFile("JSONStorage.json", "]", null, function (err) {
+        if (err) throw err;
+        console.log('Done1');
+    });
+    console.log("Process exit event with code: ", code);
+});
+  
+
+process.on("SIGTERM", (signal) => {
+    fs.appendFile("JSONStorage.json", "]", null, function (err) {
+        if (err) throw err;
+        console.log('Done2');
+    });
+    console.log(`Process ${process.pid} received a SIGTERM signal`);
+    process.exit(0);
+});
+  
+
+process.on("SIGINT", (signal) => {
+    fs.appendFile("JSONStorage.json", parseableJSON, null, function (err) {
+        if (err) throw err;
+    });
+    fs.appendFileSync("JSONStorage.json", "]", null, function (err) {
+        if (err) throw err;
+    });
+    console.log('Done');
+    console.log(`Process ${process.pid} has been terminated by ${signal}`);
+    process.exit(0);
+});
+  
+
