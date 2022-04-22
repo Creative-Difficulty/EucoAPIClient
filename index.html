@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>EuconetAPIClient</title>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js"></script>
         <link rel="stylesheet" href="style.css">
     </head>
     
@@ -37,7 +37,7 @@
                 rawFile.onreadystatechange = function () {
                     if(rawFile.readyState === 4) {
                         if(rawFile.status === 200 || rawFile.status == 0) {
-                            recievedJSON = JSON.parse(rawFile.responseText);
+                            var recievedJSON = JSON.parse(rawFile.responseText);
                             var keys = Object.keys(recievedJSON);
                             for (let i = 0; i < keys.length; i++) {
                                 var currentJSON = JSON.parse(recievedJSON[i]);
@@ -126,7 +126,7 @@
                     cpuchartelement.resetZoom();
                 }
                 </script>
-            <button id="cpuInfoZoomBtn"  onclick="resetcpuChartZoom()">Reset Zoom</button>
+            <button id="cpuInfoZoomBtn"  onclick="resetChartZoom()">Reset Zoom</button>
         </div>
     </body>
     </html>

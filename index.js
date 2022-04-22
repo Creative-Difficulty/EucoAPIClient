@@ -1,83 +1,62 @@
 import fs from "fs"
 import fetch from "node-fetch"
-import JsonDB from "node-json-db"
-import Config from "node-json-db/dist/lib/JsonDBConfig"
+import { join, dirname } from 'path'
+import { Low, JSONFile } from 'lowdb'
+import { fileURLToPath } from 'url'
 
-var LoggingDB = new JsonDB(new Config("JSONStorage.json", true, false, '/'));
+fs.truncate("JSONStorage.json", 0, function () { })
 
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const file = join(__dirname, 'JSONStorage.json')
+const adapter = new JSONFile(file)
+const db = new Low(adapter)
+
+db.data ||= []   
+const dbData = db.data
+
+var i = 0
 var recievedJSON
 var parseableJSON
 
-var jsonTime
-
-var jsonRAM
-var jsonTotalRAM
-var jsonUsedRAM
-var jsonFreeRAM
-
-var jsonCpuUsage
-var jsonCPUinfo
-var jsonCPUmodel
-var jsonCPUCores
-var jsonCPUSpeed
-
-var jsonStorage
-var jsonStorageCapacity
-var jsonUsedStorage
-var jsonFreeStorage
-
-var jsonOSinfo
-var jsonOSname
-var jsonOSVersion
-var jsonOSarchitecture
-var jsonOSlocalIP
-var jsonOStextEncoding
-var jsonOSserialnumber
-var jsonOSuefiboolean
-
 fetch("http://localhost:5050/1")
-fs.truncate("JSONStorage.json", 0, function () { })
 
 setInterval(fetchJSON, 2000)
 
-fs.appendFile("JSONStorage.json", "[", null, function (err) {
-    if (err) throw err;
-    console.log('It\'s saved!');
-});
+
 
 async function fetchJSON() {
     await fetch("http://localhost:5050/1").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
-
-        jsonTime = recievedJSON["time"]
-        jsonCpuUsage = recievedJSON["cpu_usage"]
-
-        jsonRAM = recievedJSON["RAM"]
-        jsonTotalRAM = jsonRAM["totalMemMb"]
-        jsonUsedRAM = jsonRAM["usedMemMb"]
-        jsonFreeRAM = jsonRAM["freeMemMb"]
-
-        jsonCPUinfo = recievedJSON["cpu_type"]
-        jsonCPUCores = jsonCPUinfo[1]
-        jsonCPUmodel = jsonCPUCores["model"]
-        jsonCPUSpeed = jsonCPUCores["speed"]
-
-        jsonStorage = recievedJSON["storage_info"]
-        jsonStorageCapacity = jsonStorage["totalGb"]
-        jsonUsedStorage = jsonStorage["usedGb"]
-        jsonFreeStorage = jsonStorage["freeGb"]
-
-        jsonOSinfo = recievedJSON["os_version"]
-        jsonOSname = jsonOSinfo["codename"]
-        jsonOSVersion = jsonOSinfo["release"]
-        jsonOSarchitecture = jsonOSinfo["arch"]
-        jsonOSlocalIP = jsonOSinfo["hostname"]
-        jsonOStextEncoding = jsonOSinfo["codepage"]
-        jsonOSserialnumber = jsonOSinfo["serial"]
-        jsonOSuefiboolean = jsonOSinfo["uefi"]
-        
     })
 
+    var jsonTime = recievedJSON["time"]
+    var jsonCpuUsage = recievedJSON["cpu_usage"]
+
+    var jsonRAM = recievedJSON["RAM"]
+    var jsonTotalRAM = jsonRAM["totalMemMb"]
+    var jsonUsedRAM = jsonRAM["usedMemMb"]
+    var jsonFreeRAM = jsonRAM["freeMemMb"]
+
+    var jsonCPUinfo = recievedJSON["cpu_type"]
+    var jsonCPUCores = jsonCPUinfo[1]
+    var jsonCPUmodel = jsonCPUCores["model"]
+    var jsonCPUSpeed = jsonCPUCores["speed"]
+
+    var jsonStorage = recievedJSON["storage_info"]
+    var jsonStorageCapacity = jsonStorage["totalGb"]
+    var jsonUsedStorage = jsonStorage["usedGb"]
+    var jsonFreeStorage = jsonStorage["freeGb"]
+
+    var jsonOSinfo = recievedJSON["os_version"]
+    var jsonOSname = jsonOSinfo["codename"]
+    var jsonOSVersion = jsonOSinfo["release"]
+    var jsonOSarchitecture = jsonOSinfo["arch"]
+    var jsonOSlocalIP = jsonOSinfo["hostname"]
+    var jsonOStextEncoding = jsonOSinfo["codepage"]
+    var jsonOSserialnumber = jsonOSinfo["serial"]
+    var jsonOSuefiboolean = jsonOSinfo["uefi"]
+    
     parseableJSON = JSON.stringify({
         "time": jsonTime,
         "cpu_model": jsonCPUmodel,
@@ -94,48 +73,11 @@ async function fetchJSON() {
         "os_architecture": jsonOSarchitecture,
         "local_ip": jsonOSlocalIP,
         "pc_serial_number": jsonOSserialnumber,
-        "uefi_is_enabled": jsonOSuefiboolean
+        "uefi_is_enabled": jsonOSuefiboolean,
+        "os_text_encoding": jsonOStextEncoding
     })
 
-    await fs.appendFile("JSONStorage.json", JSON.stringify(parseableJSON), null, function (err) {
-        if (err) throw err;
-        console.log('It\'s saved!');
-    });
-    await fs.appendFile("JSONStorage.json", ",", null, function (err) {
-        if (err) throw err;
-    });
+    dbData.push(parseableJSON)
+    await db.write()
 }
-
-
-process.on("exit", (code) => {
-    fs.appendFile("JSONStorage.json", "]", null, function (err) {
-        if (err) throw err;
-        console.log('Done1');
-    });
-    console.log("Process exit event with code: ", code);
-});
-  
-
-process.on("SIGTERM", (signal) => {
-    fs.appendFile("JSONStorage.json", "]", null, function (err) {
-        if (err) throw err;
-        console.log('Done2');
-    });
-    console.log(`Process ${process.pid} received a SIGTERM signal`);
-    process.exit(0);
-});
-  
-
-process.on("SIGINT", (signal) => {
-    fs.appendFile("JSONStorage.json", parseableJSON, null, function (err) {
-        if (err) throw err;
-    });
-    fs.appendFileSync("JSONStorage.json", "]", null, function (err) {
-        if (err) throw err;
-    });
-    console.log('Done');
-    console.log(`Process ${process.pid} has been terminated by ${signal}`);
-    process.exit(0);
-});
-  
 

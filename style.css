@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Roboto&family=Ubuntu:wght@300&display=swap');
 
 
 body {
@@ -34,4 +34,5 @@ body {
 
 #cpudiv #cpu_params {
   padding-top: 70px;
+  font-family: 'Ubuntu', sans-serif;
 }
