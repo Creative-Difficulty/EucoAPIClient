@@ -19,14 +19,14 @@ var i = 0
 var recievedJSON
 var parseableJSON
 
-fetch("http://localhost:5050/1")
+fetch("https://eucoapi.herokuapp.com")
 
 setInterval(fetchJSON, 2000)
 
 
 
 async function fetchJSON() {
-    await fetch("http://localhost:5050/1").then(jsonData => jsonData.json()).then(jsonData => {
+    await fetch("https://eucoapi.herokuapp.com").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
     })
 
