@@ -148,12 +148,18 @@
             <div id="ramHeading_text">RAM</div>
 
             <div id="ram_params">
+                <div id="avg_ram_usage"></div>
+                <div id="min_ram_usage"></div>
+                <div id="max_ram_usage"></div>
                 <div id="total_ram"></div>
             </div>
-            <canvas id="ramchart" width="1000px" height="200px"></canvas>
+            <canvas id="ramchartelement" width="1000px" height="200px"></canvas>
             
             <script>
-                function formatBytes(bytes, decimals = 2) {
+                var maxRAMusage;
+
+                //with GB or MB as unit
+                function formatBytesHuman(bytes, decimals = 2) {
                     if (bytes === 0) return '0 Bytes';
 
                     const k = 1024;
@@ -163,6 +169,18 @@
                     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
                     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+                }
+
+                //without, for chartjs and other computing usages
+                function formatBytes(bytes, decimals = 2) {
+                    if (bytes === 0) return '0 Bytes';
+
+                    const k = 1024;
+                    const dm = decimals < 0 ? 0 : decimals;
+
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
                 }
 
                 var labels = [];
@@ -180,26 +198,27 @@
                             for (let i = 0; i < keys.length; i++) {
                                 var currentJSON = JSON.parse(recievedJSON[i]);
                                 if(i === 0) {
-                                    var totalRAM = formatBytes(currentJSON["total_ram"]);
+                                    var totalRAM = formatBytesHuman(currentJSON["total_ram"]);
                                     document.getElementById("total_ram").innerHTML = "Total RAM: " + totalRAM;
                                 }
-                                values.push(currentJSON["cpu_usage"]);
+                                values.push(formatBytes(currentJSON["free_ram"].toFixed(2)));
                                 labels.push(currentJSON["time"]);
                             }
+                            console.log(values)
                             
 
-                            var maxCPUusage = Math.max.apply(null, values)
-                            var minCPUusage = Math.min.apply(null, values)
-                            var TimeAtmaxCpuUsage = labels[values.indexOf(Math.max.apply(null, values))]
-                            var TimeAtminCpuUsage = labels[values.indexOf(Math.min.apply(null, values))]
+                            maxRAMusage = Math.max.apply(null, values)
+                            var minRAMusage = Math.min.apply(null, values)
+                            var TimeAtmaxRAMUsage = labels[values.indexOf(Math.max.apply(null, values))]
+                            var TimeAtminRAMUsage = labels[values.indexOf(Math.min.apply(null, values))]
 
                             var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
-                            var avg_cpu_usage = sumOfValues / values.length;
+                            var avgRAMusage = sumOfValues / values.length;
 
-                            var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
-                            document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
-                            document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage
-                            document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage
+                            var avg_cpu_usage = parseFloat(avgRAMusage).toFixed(2) + "%";
+                            document.getElementById("avg_ram_usage").innerHTML = "Average RAM usage: " + avgRAMusage
+                            document.getElementById("max_ram_usage").innerHTML = "Maximum RAM usage: " + maxRAMusage + "GB " + "@" + TimeAtmaxRAMUsage
+                            document.getElementById("min_ram_usage").innerHTML = "Minimum RAM usage: " + minRAMusage + "GB " + "@" + TimeAtminRAMUsage
                             
                         }
                     }
@@ -210,9 +229,8 @@
                 
                 
                 
-                
-                var ctx = document.getElementById("ramchart").getContext("2d");
-                var cpuchartelement = new Chart(ctx, {
+                var ctx = document.getElementById("ramchartelement").getContext("2d");
+                var ramchart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
@@ -237,7 +255,7 @@
                                     mode: "xy"
                                 },
                                 limits: {
-                                    y: {min: 0, max: 100},
+                                    y: {min: 0},
                                 },
                                 zoom: {
                                     wheel: {
@@ -252,14 +270,16 @@
                             y: {
                                 beginAtZero: true,
                                 min: 0,
-                                max: 100
+                                max: 0
                             }
                         }
                     }
                 })
+                ramchart.options.scales.y.max = maxRAMusage
 
+                ramchart.update()
                 function resetRAMChartZoom() {
-                    ramchartelement.resetZoom();
+                    ramchart.resetZoom();
                 }
                 </script>
             <button id="ramInfoZoomBtn"  onclick="resetRAMChartZoom()">Reset Zoom</button>
