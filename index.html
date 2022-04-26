@@ -13,6 +13,15 @@
     
     
     <body>
+        
+        <div id="seperateCharts">Show seperate charts</div>
+        <label class="switch">
+            <input type="checkbox">
+            <span class="slider round"></span>
+        </label>
+        <div id="oneChart">Show all data in one chart</div>
+        
+
         <div id="cpudiv">
 
             <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
@@ -212,11 +221,10 @@
                             var TimeAtmaxRAMUsage = labels[values.indexOf(Math.max.apply(null, values))]
                             var TimeAtminRAMUsage = labels[values.indexOf(Math.min.apply(null, values))]
 
-                            var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
+                            var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(this).toFixed(2))
                             var avgRAMusage = sumOfValues / values.length;
 
-                            var avg_cpu_usage = parseFloat(avgRAMusage).toFixed(2) + "%";
-                            document.getElementById("avg_ram_usage").innerHTML = "Average RAM usage: " + avgRAMusage
+                            document.getElementById("avg_ram_usage").innerHTML = "Average RAM usage: " + avgRAMusage.toFixed(2) + "GB"
                             document.getElementById("max_ram_usage").innerHTML = "Maximum RAM usage: " + maxRAMusage + "GB " + "@" + TimeAtmaxRAMUsage
                             document.getElementById("min_ram_usage").innerHTML = "Minimum RAM usage: " + minRAMusage + "GB " + "@" + TimeAtminRAMUsage
                             
@@ -228,6 +236,35 @@
                 
                 
                 
+                var config = {
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: "xy"
+                            },
+                            limits: {
+                                y: {min: 0},
+                            },
+                            zoom: {
+                                wheel: {
+                                    enabled: true
+                                }
+                            }
+                        }
+                    },
+                    animation: true,
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 0
+                        }
+                    }
+                }
+
+                config.scales.y.max = maxRAMusage * 2;
                 
                 var ctx = document.getElementById("ramchartelement").getContext("2d");
                 var ramchart = new Chart(ctx, {
@@ -247,37 +284,9 @@
                         }],
                     },
                     
-                    options: {
-                        plugins: {
-                            zoom: {
-                                pan: {
-                                    enabled: true,
-                                    mode: "xy"
-                                },
-                                limits: {
-                                    y: {min: 0},
-                                },
-                                zoom: {
-                                    wheel: {
-                                        enabled: true
-                                    }
-                                }
-                            }
-                        },
-                        animation: true,
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                min: 0,
-                                max: 0
-                            }
-                        }
-                    }
+                    options: config
                 })
-                ramchart.options.scales.y.max = maxRAMusage
 
-                ramchart.update()
                 function resetRAMChartZoom() {
                     ramchart.resetZoom();
                 }
