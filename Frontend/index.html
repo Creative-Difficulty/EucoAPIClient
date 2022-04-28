@@ -5,26 +5,31 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>EuconetAPIClient</title>
-        <script type="text/javascript" src="./lib/chartjs-3.7.1.js"></script>
-        <script type="text/javascript" src="./lib/hammer-2.0.8.js"></script>
-        <script type="text/javascript" src="./lib/chartjs-plugin-zoom-1.2.1.js"></script>
+        <script type="text/javascript" src="../../lib/chartjs-3.7.1.js"></script>
+        <script type="text/javascript" src="../../lib/hammer-2.0.8.js"></script>
+        <script type="text/javascript" src="../../lib/chartjs-plugin-zoom-1.2.1.js"></script>
         <link rel="stylesheet" href="style.css">
     </head>
     
     
     <body>
-        
         <div id="seperateCharts">Show seperate charts</div>
         <label class="switch">
             <input type="checkbox">
             <span class="slider round"></span>
         </label>
         <div id="oneChart">Show all data in one chart</div>
+
+        <div id="ServerTime">Show seperate charts</div>
+        <label class="switch">
+            <input type="checkbox">
+            <span class="slider round"></span>
+        </label>
+        <div id="ClientTime">Show all data in one chart</div>
         
 
         <div id="cpudiv">
-
-            <div id="cpuHeading_svg"><img src="img/cpu_icon.svg" /></div>
+            <div id="cpuHeading_svg"><img src="../../img/cpu_icon.svg" /></div>
             <div id="cpuHeading_text">CPU</div>
             <div id="cpu_params">
                 <div id="cpu_model"> </div>
@@ -42,11 +47,13 @@
                 
                 
                 var rawFile = new XMLHttpRequest();
-                rawFile.open("GET", "JSONStorage.json", false);
+                rawFile.open("GET", "../../Backend/JSONStorage.json", false);
                 rawFile.onreadystatechange = function () {
                     if(rawFile.readyState === 4) {
                         if(rawFile.status === 200 || rawFile.status == 0) {
+                            
                             var recievedJSON = JSON.parse(rawFile.responseText);
+                            console.log(recievedJSON)
                             var keys = Object.keys(recievedJSON);
                             for (let i = 0; i < keys.length; i++) {
                                 var currentJSON = JSON.parse(recievedJSON[i]);
@@ -153,7 +160,7 @@
 
         <div id="ramdiv">
 
-            <div id="ramHeading_svg"><img src="img/ram_icon.svg" /></div>
+            <div id="ramHeading_svg"><img src="../../img/ram_icon.svg" /></div>
             <div id="ramHeading_text">RAM</div>
 
             <div id="ram_params">
@@ -198,7 +205,7 @@
                 
                 
                 var rawFile = new XMLHttpRequest();
-                rawFile.open("GET", "JSONStorage.json", false);
+                rawFile.open("GET", "../../Backend/JSONStorage.json", false);
                 rawFile.onreadystatechange = function () {
                     if(rawFile.readyState === 4) {
                         if(rawFile.status === 200 || rawFile.status == 0) {
@@ -257,6 +264,11 @@
                     responsive: true,
                     scales: {
                         y: {
+                            ticks: {
+                                callback: function (value) {
+                                    return value + " GB"
+                                }
+                            },
                             beginAtZero: true,
                             min: 0,
                             max: 0
@@ -264,7 +276,7 @@
                     }
                 }
 
-                config.scales.y.max = maxRAMusage * 2;
+                config.scales.y.max = maxRAMusage.toFixed(0) * 2;
                 
                 var ctx = document.getElementById("ramchartelement").getContext("2d");
                 var ramchart = new Chart(ctx, {

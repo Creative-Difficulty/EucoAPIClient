@@ -19,18 +19,19 @@ var LoggedNum = 0
 var recievedJSON
 var parseableJSON
 
-fetch("https://eucoapi.herokuapp.com")
+await fetch("http://localhost:8082/")
+await fetch("http://localhost:8082/")
 
 setInterval(fetchJSON, 2000)
 
 
 
 async function fetchJSON() {
-    LoggedNum++;
-    await fetch("https://eucoapi.herokuapp.com").then(jsonData => jsonData.json()).then(jsonData => {
+    await fetch("http://localhost:8082/").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
     })
     
+    console.log(recievedJSON)
     if(LoggedNum > 1) {
         var jsonTime = recievedJSON["time"]
         var jsonCpuUsage = recievedJSON["cpu_usage"]
@@ -44,8 +45,8 @@ async function fetchJSON() {
         var jsonUsedStorage = jsonStorage["usedGb"]
         var jsonFreeStorage = jsonStorage["freeGb"]
         
-       
-    
+        
+        
         parseableJSON = JSON.stringify({
             "time": jsonTime,
             "cpu_usage": jsonCpuUsage,
@@ -102,8 +103,9 @@ async function fetchJSON() {
             "os_text_encoding": jsonOStextEncoding
         })
     }
+    LoggedNum++;
     
-
+    
     
     await dbData.push(parseableJSON)
     await db.write()
