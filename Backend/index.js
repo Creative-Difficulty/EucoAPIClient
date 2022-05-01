@@ -1,37 +1,26 @@
 import fs from "fs"
 import fetch from "node-fetch"
-import { join, dirname } from 'path'
-import { Low, JSONFile } from 'lowdb'
-import { fileURLToPath } from 'url'
-
-fs.truncate("JSONStorage.json", 0, function () { })
 
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const file = join(__dirname, 'JSONStorage.json')
-const adapter = new JSONFile(file)
-const db = new Low(adapter)
-
-db.data ||= []   
-const dbData = db.data
+var stats = fs.statSync("./DB/DB.txt")
+var DBSizeMB = stats.size / (1024*1024);
+console.log("size of database on disk: ", DBSizeMB.toFixed(5) + "MB")
 
 var LoggedNum = 0
 var recievedJSON
-var parseableJSON
+var parseableData
 
-await fetch("http://localhost:8082/")
-await fetch("http://localhost:8082/")
+await fetch("https://eucoapi.herokuapp.com")
 
-setInterval(fetchJSON, 2000)
-
+setInterval(fetchJSON, 3000)
+const Appendstream = fs.createWriteStream("./DB/DB.txt", {flags:'a'});
 
 
 async function fetchJSON() {
-    await fetch("http://localhost:8082/").then(jsonData => jsonData.json()).then(jsonData => {
+    await fetch("https://eucoapi.herokuapp.com").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
     })
     
-    console.log(recievedJSON)
     if(LoggedNum > 1) {
         var jsonTime = recievedJSON["time"]
         var jsonCpuUsage = recievedJSON["cpu_usage"]
@@ -47,14 +36,9 @@ async function fetchJSON() {
         
         
         
-        parseableJSON = JSON.stringify({
-            "time": jsonTime,
-            "cpu_usage": jsonCpuUsage,
-            "used_ram": jsonUsedRAM,
-            "free_ram": jsonFreeRAM,
-            "free_storageGB": jsonFreeStorage,
-            "used_storageGB": jsonUsedStorage,
-        })
+        parseableData = "time=" + jsonTime + " " + "cpu_usage=" + jsonCpuUsage + " " + "used_ram=" + jsonUsedRAM + " " + "free_ram=" + jsonFreeRAM + " " + "free_storageGB=" + jsonFreeStorage + " " + "used_storageGB=" + jsonUsedStorage + "\n"
+        
+            
     } else {
         var jsonTime = recievedJSON["time"]
         var jsonCpuUsage = recievedJSON["cpu_usage"]
@@ -82,32 +66,19 @@ async function fetchJSON() {
         var jsonOStextEncoding = jsonOSinfo["codepage"]
         var jsonOSserialnumber = jsonOSinfo["serial"]
         var jsonOSuefiboolean = jsonOSinfo["uefi"]
+
+        if(jsonOSserialnumber === null) {
+            jsonOSserialnumber = "not available"
+        }
         
-        parseableJSON = JSON.stringify({
-            "time": jsonTime,
-            "cpu_model": jsonCPUmodel,
-            "cpu_speed": jsonCPUSpeed,
-            "cpu_usage": jsonCpuUsage,
-            "total_ram": jsonTotalRAM,
-            "used_ram": jsonUsedRAM,
-            "free_ram": jsonFreeRAM,
-            "total_storageGB": jsonStorageCapacity,
-            "free_storageGB": jsonFreeStorage,
-            "used_storageGB": jsonUsedStorage,
-            "os_name": jsonOSname,
-            "os_version": jsonOSVersion,
-            "os_architecture": jsonOSarchitecture,
-            "local_ip": jsonOSlocalIP,
-            "pc_serial_number": jsonOSserialnumber,
-            "uefi_is_enabled": jsonOSuefiboolean,
-            "os_text_encoding": jsonOStextEncoding
-        })
+        parseableData = "time=" + jsonTime + " " + "cpu_model=" + jsonCPUmodel + " " + "cpu_speed=" + jsonCPUSpeed + " " + "cpu_usage=" + jsonCpuUsage + " " + "total_ram=" + jsonTotalRAM + " " + "used_ram=" + jsonUsedRAM + " " + "free_ram=" + jsonFreeRAM + " " + "total_storageGB=" + jsonStorageCapacity + " " + "free_storageGB=" + jsonFreeStorage + " " + "used_storageGB=" + jsonUsedStorage + " " + "os_name=" + jsonOSname + " " + "os_version=" + jsonOSVersion + " " + "os_architecture=" + jsonOSarchitecture + " " + "local_ip=" + jsonOSlocalIP + " " + "pc_serial_number=" + jsonOSserialnumber + " " + "uefi_is_enabled=" + jsonOSuefiboolean + " " + "os_text_encoding=" + jsonOStextEncoding + "\n"
+        
+        
     }
     LoggedNum++;
     
     
     
-    await dbData.push(parseableJSON)
-    await db.write()
+    Appendstream.write(parseableData)
 }
 

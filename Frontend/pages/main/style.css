@@ -58,6 +58,32 @@ body {
   pointer-events: none;
 }
 
+#ServerTime {
+  font-size: 15px;
+  font-family: "Roboto", sans-serif;
+  margin-left: 15px;
+  float: right;
+  margin-top: 8px;
+  cursor: default;
+  pointer-events: none;
+}
+
+.TimeSwitch {
+  padding-top: 50px;
+  padding-right: 22px;
+}
+
+#ClientTime {
+  font-size: 15px;
+  font-family: "Roboto", sans-serif;
+  margin-right: 15px;
+  float: right;
+  margin-top: 8px;
+  cursor: default;
+  pointer-events: none;
+}
+
+
 .switch {
   float: right;
   position: relative;

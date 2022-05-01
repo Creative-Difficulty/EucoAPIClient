@@ -5,31 +5,35 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>EuconetAPIClient</title>
-        <script type="text/javascript" src="../../lib/chartjs-3.7.1.js"></script>
-        <script type="text/javascript" src="../../lib/hammer-2.0.8.js"></script>
-        <script type="text/javascript" src="../../lib/chartjs-plugin-zoom-1.2.1.js"></script>
-        <link rel="stylesheet" href="style.css">
+        <script type="text/plain" src="./lib/chartjs-3.7.1.js"></script>
+        <script type="text/plain" src="./lib/hammer-2.0.8.js"></script>
+        <script type="text/plain" src="./lib/chartjs-plugin-zoom-1.2.1.js"></script>
+        <link rel="stylesheet" href="./style.css">
     </head>
     
     
     <body>
-        <div id="seperateCharts">Show seperate charts</div>
-        <label class="switch">
-            <input type="checkbox">
-            <span class="slider round"></span>
-        </label>
-        <div id="oneChart">Show all data in one chart</div>
+        <div id="chartSwitch">
+            <div id="seperateCharts">Show seperate charts</div>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <div id="oneChart">Show all data in one chart</div>
+        </div>
 
-        <div id="ServerTime">Show seperate charts</div>
-        <label class="switch">
-            <input type="checkbox">
-            <span class="slider round"></span>
-        </label>
-        <div id="ClientTime">Show all data in one chart</div>
+        <div class="TimeSwitch">
+            <div id="ServerTime">Show Server Time</div>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <div id="ClientTime">Show Client Time</div>
+        </div>
         
 
         <div id="cpudiv">
-            <div id="cpuHeading_svg"><img src="../../img/cpu_icon.svg" /></div>
+            <div id="cpuHeading_svg"><img src="./img/cpu_icon.svg" /></div>
             <div id="cpuHeading_text">CPU</div>
             <div id="cpu_params">
                 <div id="cpu_model"> </div>
@@ -47,7 +51,7 @@
                 
                 
                 var rawFile = new XMLHttpRequest();
-                rawFile.open("GET", "../../Backend/JSONStorage.json", false);
+                rawFile.open("GET", "../../../Backend/DB/DB.txt", false);
                 rawFile.onreadystatechange = function () {
                     if(rawFile.readyState === 4) {
                         if(rawFile.status === 200 || rawFile.status == 0) {
@@ -160,7 +164,7 @@
 
         <div id="ramdiv">
 
-            <div id="ramHeading_svg"><img src="../../img/ram_icon.svg" /></div>
+            <div id="ramHeading_svg"><img src="./img/ram_icon.svg" /></div>
             <div id="ramHeading_text">RAM</div>
 
             <div id="ram_params">
@@ -205,7 +209,7 @@
                 
                 
                 var rawFile = new XMLHttpRequest();
-                rawFile.open("GET", "../../Backend/JSONStorage.json", false);
+                rawFile.open("GET", "../../../Backend/DB/DB.txt", false);
                 rawFile.onreadystatechange = function () {
                     if(rawFile.readyState === 4) {
                         if(rawFile.status === 200 || rawFile.status == 0) {
@@ -217,6 +221,7 @@
                                     var totalRAM = formatBytesHuman(currentJSON["total_ram"]);
                                     document.getElementById("total_ram").innerHTML = "Total RAM: " + totalRAM;
                                 }
+                                if(currentJSON["time"])
                                 values.push(formatBytes(currentJSON["free_ram"].toFixed(2)));
                                 labels.push(currentJSON["time"]);
                             }
@@ -234,7 +239,6 @@
                             document.getElementById("avg_ram_usage").innerHTML = "Average RAM usage: " + avgRAMusage.toFixed(2) + "GB"
                             document.getElementById("max_ram_usage").innerHTML = "Maximum RAM usage: " + maxRAMusage + "GB " + "@" + TimeAtmaxRAMUsage
                             document.getElementById("min_ram_usage").innerHTML = "Minimum RAM usage: " + minRAMusage + "GB " + "@" + TimeAtminRAMUsage
-                            
                         }
                     }
                 }
