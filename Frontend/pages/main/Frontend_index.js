@@ -1,17 +1,19 @@
 import express from "express"
-import http from "http"
 import path from "path"
 
-const app = express();
-var server = http.createServer(app);
-var port = 3000;
+const app = express()
+const port = 3000
+const __dirname = path.resolve()
 
-const __dirname = path.resolve();
+app.use("/img", express.static(__dirname + "/img"));
+app.use("/style.css", express.static(__dirname + "/style.css"));
+app.use("/lib", express.static(__dirname + "/lib"));
 
 
-server.listen(port, function () {
-    console.log('Webserver läuft und hört auf Port %d', port);
-});
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + "/index.html")
+})
 
-app.use(express.static(__dirname + '/public'));
-app.use('main/img', express.static('image'))
+app.listen(port, () => {
+  console.log("Static file server running at\n  => http://localhost:" + port);
+})
