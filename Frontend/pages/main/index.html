@@ -5,6 +5,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>EuconetAPIClient</title>
+        <link rel="icon" type="image/x-icon" href="./img/favicon.ico">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="   crossorigin="anonymous"></script>
         <script type="text/plain" src="./lib/chartjs-3.7.1.js"></script>
         <script type="text/plain" src="./lib/hammer-2.0.8.js"></script>
         <script type="text/plain" src="./lib/chartjs-plugin-zoom-1.2.1.js"></script>
@@ -29,6 +31,7 @@
                 <span class="slider round"></span>
             </label>
             <div id="ClientTime">Show Client Time</div>
+            Select database file <select id="FileSelect"><option value="" selected>none</option></select>
         </div>
         
 
@@ -48,13 +51,48 @@
                 var labels = [];
                 var values = [];
                 
+
                 
-                
-                var rawFile = new XMLHttpRequest();
+                function processData(data) {
+                    var fileContentArray = data.split("\n");
+                    alert(fileContentArray)
+                    for(var line = 0; line < lines.length-1; line++){
+                        console.log(line + " --> "+ lines[line]);
+                    }
+                    var allTextLines = allText.split(/\r\n|\n/);
+
+                    var record_num = 5;
+                    var entries = allTextLines[0].split(',');
+                    var lines = [];
+
+                    var headings = entries.splice(0,record_num);
+                    while (entries.length>0) {
+                        var tarr = [];
+                        for (var j=0; j<record_num; j++) {
+                            tarr.push(headings[j]+":"+entries.shift());
+                        }
+                        lines.push(tarr);
+                    }
+                }
+                $.getJSON("../../../Backend/DB", data => {
+                    for (let i = 0; i < data.length; i++) {
+                        $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
+                        alert(data[i].replace(".txt", ""))
+                    }
+                    
+                });
+
+                //on fileselct change get db data, put into chartjs.
+                var rawFile = new XMLHttpRequest()
                 rawFile.open("GET", "../../../Backend/DB/DB.txt", false);
                 rawFile.onreadystatechange = function () {
                     if(rawFile.readyState === 4) {
                         if(rawFile.status === 200 || rawFile.status == 0) {
+
+                            var lines = rawFile.responseText.split("\n");
+                            for(var i = 0;i < lines.length;i++) {
+                                console.log(lines[1])
+                            }
                             
                             var recievedJSON = JSON.parse(rawFile.responseText);
                             console.log(recievedJSON)

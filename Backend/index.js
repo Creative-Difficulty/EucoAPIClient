@@ -1,10 +1,101 @@
 import fs from "fs"
 import fetch from "node-fetch"
+import path from "path";
+import logger from "node-color-log"
+import { exit } from "process";
+import isPi from "detect-rpi"
+import cliProgress from "cli-progress"
+import JSZip from "jszip";
+import * as FileSaver from 'file-saver';
+const __dirname = path.resolve()
+
+var zip = new JSZip();
+
+logger.setLevel("success")
+if(isPi()) {
+    console.log("l")
+} else {
+    console.log("no")
+}
+process.argv.shift();
+process.argv.shift();
+
+if(process.argv.includes("-help") || process.argv.includes("-h")) {
+    console.log(`
+                
+                    Welcome to the EucoAPIClient help menu!
+
+    COMMAND     USAGE                                               ALIAS
+    ---------------------------------------------------------------------
+    -help       shows this menu                                     -h
+    -clear      clears/deletes the Database                         -c / -delete / -del
+    -list       shows the list of files in the database             -l
+    -debug      prints debugging messagees into the console         -d
+    -zip        creates a zip archive of all files in the database  -z
+    `)
+
+    process.exit(0);
+} else if(process.argv.includes("-clear") || process.argv.includes("-c") || process.argv.includes("-delete") || process.argv.includes("-del")) {
+    console.log("Deleting all files in the database...");
+    const clearBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
+    const directory = path.resolve(__dirname, "DB");
+
+    fs.readdir(directory, (err, files) => {
+        var filesList = [];
+        
+        files.forEach(function (file) {
+            if (path.extname(file) === ".txt") {
+                filesList.push(file);
+
+            }
+        });
+
+        console.log(filesList)
+        if (err) throw err;
+        clearBar.start(filesList.length-1, 0);
+
+        for (const file of files) {
+            fs.unlink(path.join(directory, file), err => {
+                if (err) throw err;
+                clearBar.increment(1);
+            });
+        }
+        clearBar.stop();
+        exit(0);
+    });
+
+    
+} else if (process.argv.includes("-list") || process.argv.includes("-l")) {
+    fs.readdir(path.resolve(__dirname, "DB"), function (err, files) {
+        if (err) {
+            return console.log('Unable to scan directory: ' + err);
+        }
+
+        console.log("Database files: ")
+        files.forEach(function (file) {
+            console.log(file); 
+        });
+        exit(0);
+    });
+} else if (process.argv.includes("-zip") || process.argv.includes("-z")) {
+    var currentdate = new Date();
+    var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+    zip.folder("DB");
+    await zip.generateAsync({type:"string"}).then(function(content) {
+        FileSaver.saveAs(content, "DB" + datetime + ".zip");
+    });
+}
 
 
-var stats = fs.statSync("./DB/DB.txt")
-var DBSizeMB = stats.size / (1024*1024);
-console.log("size of database on disk: ", DBSizeMB.toFixed(5) + "MB")
+
+var currentdate = new Date();
+var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+var newDBName = "./DB/DB-" + datetime + ".txt";
+
+fs.open(newDBName, 'w', function (err, file) {
+    if (err) throw err;
+    console.log('File is opened in write mode.');
+});
 
 var LoggedNum = 0
 var recievedJSON
@@ -36,9 +127,8 @@ async function fetchJSON() {
         
         
         
-        parseableData = "time=" + jsonTime + " " + "cpu_usage=" + jsonCpuUsage + " " + "used_ram=" + jsonUsedRAM + " " + "free_ram=" + jsonFreeRAM + " " + "free_storageGB=" + jsonFreeStorage + " " + "used_storageGB=" + jsonUsedStorage + "\n"
-        
-            
+        parseableData = "time=" + jsonTime + "," + "cpu_usage=" + jsonCpuUsage + "," + "used_ram=" + jsonUsedRAM + "," + "free_ram=" + jsonFreeRAM + "," + "free_storageGB=" + jsonFreeStorage + "," + "used_storageGB=" + jsonUsedStorage + "\n"
+
     } else {
         var jsonTime = recievedJSON["time"]
         var jsonCpuUsage = recievedJSON["cpu_usage"]
@@ -71,7 +161,7 @@ async function fetchJSON() {
             jsonOSserialnumber = "not available"
         }
         
-        parseableData = "time=" + jsonTime + " " + "cpu_model=" + jsonCPUmodel + " " + "cpu_speed=" + jsonCPUSpeed + " " + "cpu_usage=" + jsonCpuUsage + " " + "total_ram=" + jsonTotalRAM + " " + "used_ram=" + jsonUsedRAM + " " + "free_ram=" + jsonFreeRAM + " " + "total_storageGB=" + jsonStorageCapacity + " " + "free_storageGB=" + jsonFreeStorage + " " + "used_storageGB=" + jsonUsedStorage + " " + "os_name=" + jsonOSname + " " + "os_version=" + jsonOSVersion + " " + "os_architecture=" + jsonOSarchitecture + " " + "local_ip=" + jsonOSlocalIP + " " + "pc_serial_number=" + jsonOSserialnumber + " " + "uefi_is_enabled=" + jsonOSuefiboolean + " " + "os_text_encoding=" + jsonOStextEncoding + "\n"
+        parseableData = "time=" + jsonTime + "," + "cpu_model=" + jsonCPUmodel + "," + "cpu_speed=" + jsonCPUSpeed + "," + "cpu_usage=" + jsonCpuUsage + "," + "total_ram=" + jsonTotalRAM + "," + "used_ram=" + jsonUsedRAM + "," + "free_ram=" + jsonFreeRAM + "," + "total_storageGB=" + jsonStorageCapacity + "," + "free_storageGB=" + jsonFreeStorage + "," + "used_storageGB=" + jsonUsedStorage + "," + "os_name=" + jsonOSname + "," + "os_version=" + jsonOSVersion + "," + "os_architecture=" + jsonOSarchitecture + "," + "local_ip=" + jsonOSlocalIP + "," + "pc_serial_number=" + jsonOSserialnumber + "," + "uefi_is_enabled=" + jsonOSuefiboolean + "," + "os_text_encoding=" + jsonOStextEncoding + "\n"
         
         
     }
