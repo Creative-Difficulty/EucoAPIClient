@@ -6,16 +6,15 @@ import { exit } from "process";
 import isPi from "detect-rpi"
 import cliProgress from "cli-progress"
 import JSZip from "jszip";
-import * as FileSaver from 'file-saver';
 const __dirname = path.resolve()
 
 var zip = new JSZip();
 
 logger.setLevel("success")
 if(isPi()) {
-    console.log("l")
+    console.log("EucoAPIClient is running on a Raspberry Pi!")
 } else {
-    console.log("no")
+    console.log("EucoAPIClient isnt running on a Raspberry Pi!")
 }
 process.argv.shift();
 process.argv.shift();
@@ -77,13 +76,6 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
         });
         exit(0);
     });
-} else if (process.argv.includes("-zip") || process.argv.includes("-z")) {
-    var currentdate = new Date();
-    var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
-    zip.folder("DB");
-    await zip.generateAsync({type:"string"}).then(function(content) {
-        FileSaver.saveAs(content, "DB" + datetime + ".zip");
-    });
 }
 
 
@@ -94,7 +86,7 @@ var newDBName = "./DB/DB-" + datetime + ".txt";
 
 fs.open(newDBName, 'w', function (err, file) {
     if (err) throw err;
-    console.log('File is opened in write mode.');
+    console.log("Created new database file with name: " + newDBName);
 });
 
 var LoggedNum = 0
@@ -103,8 +95,8 @@ var parseableData
 
 await fetch("https://eucoapi.herokuapp.com")
 
-setInterval(fetchJSON, 3000)
-const Appendstream = fs.createWriteStream("./DB/DB.txt", {flags:'a'});
+setInterval(fetchJSON, 10000)
+const Appendstream = fs.createWriteStream(newDBName, {flags:'a'});
 
 
 async function fetchJSON() {
