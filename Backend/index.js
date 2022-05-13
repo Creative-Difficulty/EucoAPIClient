@@ -4,15 +4,13 @@ import path from "path";
 import logger from "node-color-log"
 import { exit } from "process";
 import isPi from "detect-rpi"
-import cliProgress from "cli-progress"
-import JSZip from "jszip";
+import { zip } from "zip-a-folder";
 const __dirname = path.resolve()
 
-var zip = new JSZip();
-
+console.log(path.join(__dirname, "..", "Frontend", "pages", "main", "DB"))
 logger.setLevel("success")
 if(isPi()) {
-    console.log("EucoAPIClient is running on a Raspberry Pi!")
+    console.log("EucoAPIClient is running on a Raspberry Pi!\n Initializing Pi-only features")
 } else {
     console.log("EucoAPIClient isnt running on a Raspberry Pi!")
 }
@@ -24,20 +22,21 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
                 
                     Welcome to the EucoAPIClient help menu!
 
-    COMMAND     USAGE                                               ALIAS
-    ---------------------------------------------------------------------
-    -help       shows this menu                                     -h
-    -clear      clears/deletes the Database                         -c / -delete / -del
-    -list       shows the list of files in the database             -l
-    -debug      prints debugging messagees into the console         -d
-    -zip        creates a zip archive of all files in the database  -z
+    COMMAND     USAGE                                                   ALIAS               
+    ---------------------------------------------------------------------------
+    -help       shows this menu                                         -h
+    -clear      clears/deletes the Database                             -c / -delete / -del
+    -list       shows the list of files in the database                 -l
+    -debug      prints debugging messagees into the console             -d
+    -zip        creates a zip archive of all files in the database      -z
+    -dbdir      shows the absolute file path to the database
     `)
 
     process.exit(0);
 } else if(process.argv.includes("-clear") || process.argv.includes("-c") || process.argv.includes("-delete") || process.argv.includes("-del")) {
     console.log("Deleting all files in the database...");
     const clearBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-    const directory = path.resolve(__dirname, "DB");
+    const directory = path.join(__dirname, "..", "Frontend", "pages", "main", "DB");
 
     fs.readdir(directory, (err, files) => {
         var filesList = [];
@@ -59,13 +58,13 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
                 clearBar.increment(1);
             });
         }
-        clearBar.stop();
-        exit(0);
+        //clearBar.stop();
+        //exit(0);
     });
 
     
 } else if (process.argv.includes("-list") || process.argv.includes("-l")) {
-    fs.readdir(path.resolve(__dirname, "DB"), function (err, files) {
+    fs.readdir(path.join(__dirname, "DB"), function (err, files) {
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         }
@@ -76,15 +75,19 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
         });
         exit(0);
     });
+} else if(process.argv.includes("-zip") || process.argv.includes("-z")) {
+    var currentdate = new Date();
+    var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds() + "-Backup.zip";
+    const zipLocation = path.join(__dirname, "ZIPs", datetime);
+    await zip(path.join(__dirname, "..", "Frontend", "pages", "main", "DB"), zipLocation);
+    exit(0)
 }
-
-
 
 var currentdate = new Date();
 var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
-var newDBName = "./DB/DB-" + datetime + ".txt";
+var newDBName = "DB-" + datetime + ".txt";
 
-fs.open(newDBName, 'w', function (err, file) {
+fs.open(path.join(__dirname, "..", "Frontend", "pages", "main", "DB", newDBName), 'w', function (err, file) {
     if (err) throw err;
     console.log("Created new database file with name: " + newDBName);
 });
@@ -93,14 +96,14 @@ var LoggedNum = 0
 var recievedJSON
 var parseableData
 
-await fetch("https://eucoapi.herokuapp.com")
+await fetch("http://10.0.0.23:8082")
 
 setInterval(fetchJSON, 10000)
-const Appendstream = fs.createWriteStream(newDBName, {flags:'a'});
+const Appendstream = fs.createWriteStream(path.join(__dirname, "..", "Frontend", "pages", "main", "DB", newDBName), {flags:'a'});
 
 
 async function fetchJSON() {
-    await fetch("https://eucoapi.herokuapp.com").then(jsonData => jsonData.json()).then(jsonData => {
+    await fetch("http://10.0.0.23:8082").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
     })
     

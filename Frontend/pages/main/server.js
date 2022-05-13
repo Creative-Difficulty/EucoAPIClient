@@ -29,7 +29,7 @@ const __dirname = path.resolve()
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use("/style.css", express.static(path.join(__dirname, "style.css")));
 app.use("/lib", express.static(path.join(__dirname, "js")));
-app.use("/Backend/DB/DB.txt", express.static(path.join(__dirname, "..", "..", "..", "Backend", "DB", "DB.txt")));
+app.use("/Backend/DB", express.static(path.join(__dirname, "..", "..", "..", "Backend", "DB")));
 
 
 app.get('/', (req, res) => {

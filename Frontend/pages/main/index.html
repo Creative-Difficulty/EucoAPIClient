@@ -31,7 +31,7 @@
                 <span class="slider round"></span>
             </label>
             <div id="ClientTime">Show Client Time</div>
-            Select database file <select id="FileSelect"><option value="" selected>none</option></select>
+            Select database file <select id="FileSelect"><option value="none" selected>none</option></select>
         </div>
         
 
@@ -50,84 +50,83 @@
             <script>
                 var labels = [];
                 var values = [];
+                var FileSelectData = [];
                 
+                var getDBList = new XMLHttpRequest()
+                var DBListPath = "../../../Backend/DB" //+ $("#FileSelect option:selected").val();
+                getDBList.open("GET", DBListPath, false);
+                getDBList.onreadystatechange = function () {
+                    if(getDBList.readyState === 4) {
+                        if(getDBList.status === 200 || getDBList.status == 0) {
 
-                
-                function processData(data) {
-                    var fileContentArray = data.split("\n");
-                    alert(fileContentArray)
-                    for(var line = 0; line < lines.length-1; line++){
-                        console.log(line + " --> "+ lines[line]);
-                    }
-                    var allTextLines = allText.split(/\r\n|\n/);
-
-                    var record_num = 5;
-                    var entries = allTextLines[0].split(',');
-                    var lines = [];
-
-                    var headings = entries.splice(0,record_num);
-                    while (entries.length>0) {
-                        var tarr = [];
-                        for (var j=0; j<record_num; j++) {
-                            tarr.push(headings[j]+":"+entries.shift());
                         }
-                        lines.push(tarr);
                     }
                 }
-                $.getJSON("../../../Backend/DB", data => {
-                    for (let i = 0; i < data.length; i++) {
-                        $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
-                        alert(data[i].replace(".txt", ""))
-                    }
-                    
-                });
+                console.log("lol" + data)
+                for (let i = 0; i < data.length; i++) {
+                    $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
+                    FileSelectData.push(data[i]);
+                }
+                if (data.length === 0) {
+                    $("#FileSelect").append(new Option("Database is empty", "no_db"))
+                    FileSelectData.push("none")
+                    return;
+                }
 
                 //on fileselct change get db data, put into chartjs.
-                var rawFile = new XMLHttpRequest()
-                rawFile.open("GET", "../../../Backend/DB/DB.txt", false);
-                rawFile.onreadystatechange = function () {
-                    if(rawFile.readyState === 4) {
-                        if(rawFile.status === 200 || rawFile.status == 0) {
-
-                            var lines = rawFile.responseText.split("\n");
-                            for(var i = 0;i < lines.length;i++) {
-                                console.log(lines[1])
-                            }
-                            
-                            var recievedJSON = JSON.parse(rawFile.responseText);
-                            console.log(recievedJSON)
-                            var keys = Object.keys(recievedJSON);
-                            for (let i = 0; i < keys.length; i++) {
-                                var currentJSON = JSON.parse(recievedJSON[i]);
-                                if(i === 0) {
-                                    var cpu_model = currentJSON["cpu_model"].replace("(R)", "&reg;").replace("(TM)", "&trade;")
-                                    document.getElementById("cpu_model").innerHTML = "CPU Model: " + cpu_model;
-                                    var cpu_speed = currentJSON["cpu_speed"]
-                                    document.getElementById("cpu_speed").innerHTML = "CPU Speed: " + cpu_speed + "MHz";
+                $("#FileSelect").change(function(){
+                    if($("#FileSelect option:selected").val() === "none"  || $("#FileSelect option:selected").val() === "no_db") {
+                        return;
+                    }
+                    var openDB = new XMLHttpRequest()
+                    var DBpath = "../../../Backend/DB/" + $("#FileSelect option:selected").val();
+                    openDB.open("GET", DBpath, false);
+                    openDB.onreadystatechange = function () {
+                        if(openDB.readyState === 4) {
+                            if(openDB.status === 200 || openDB.status == 0) {
+    
+                                var lines = openDB.responseText.split("\n");
+                                for(var i = 0;i < lines.length;i++) {
+                                    if(lines === 1) {
+                                        console.log(lines[1])
+                                    }
                                 }
-                                values.push(currentJSON["cpu_usage"]);
-                                labels.push(currentJSON["time"]);
+                                
+                                var recievedJSON = JSON.parse(openDB.responseText);
+                                console.log(recievedJSON)
+                                var keys = Object.keys(recievedJSON);
+                                for (let i = 0; i < keys.length; i++) {
+                                    var currentJSON = JSON.parse(recievedJSON[i]);
+                                    if(i === 0) {
+                                        var cpu_model = currentJSON["cpu_model"].replace("(R)", "&reg;").replace("(TM)", "&trade;")
+                                        document.getElementById("cpu_model").innerHTML = "CPU Model: " + cpu_model;
+                                        var cpu_speed = currentJSON["cpu_speed"]
+                                        document.getElementById("cpu_speed").innerHTML = "CPU Speed: " + cpu_speed + "MHz";
+                                    }
+                                    values.push(currentJSON["cpu_usage"]);
+                                    labels.push(currentJSON["time"]);
+                                }
+                                
+    
+                                var maxCPUusage = Math.max.apply(null, values)
+                                var minCPUusage = Math.min.apply(null, values)
+                                var TimeAtmaxCpuUsage = labels[values.indexOf(Math.max.apply(null, values))]
+                                var TimeAtminCpuUsage = labels[values.indexOf(Math.min.apply(null, values))]
+    
+                                var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
+                                var avg_cpu_usage = sumOfValues / values.length;
+    
+                                var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
+                                document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
+                                document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage
+                                document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage
+                                
                             }
-                            
-
-                            var maxCPUusage = Math.max.apply(null, values)
-                            var minCPUusage = Math.min.apply(null, values)
-                            var TimeAtmaxCpuUsage = labels[values.indexOf(Math.max.apply(null, values))]
-                            var TimeAtminCpuUsage = labels[values.indexOf(Math.min.apply(null, values))]
-
-                            var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
-                            var avg_cpu_usage = sumOfValues / values.length;
-
-                            var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
-                            document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
-                            document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage
-                            document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage
-                            
                         }
                     }
-                }
+                    openDB.send(null);
+                })
                 
-                rawFile.send(null);
                 
                 
                 
@@ -183,7 +182,8 @@
                 function resetCPUChartZoom() {
                     cpuchartelement.resetZoom();
                 }
-                </script>
+            </script>
+            
             <button id="cpuInfoZoomBtn"  onclick="resetCPUChartZoom()">Reset Zoom</button>
         </div>
 
