@@ -1,3 +1,4 @@
+//TODO: migrate to react
 import fs from "fs"
 import fetch from "node-fetch"
 import path from "path";
@@ -10,9 +11,9 @@ const __dirname = path.resolve()
 console.log(path.join(__dirname, "..", "Frontend", "pages", "main", "DB"))
 logger.setLevel("success")
 if(isPi()) {
-    console.log("EucoAPIClient is running on a Raspberry Pi!\n Initializing Pi-only features")
+    console.log("EucoAPIClient is running on a Raspberry Pi !\n Initializing Pi-only features")
 } else {
-    console.log("EucoAPIClient isnt running on a Raspberry Pi!")
+    console.log("EucoAPIClient is running on a desktop computer")
 }
 process.argv.shift();
 process.argv.shift();
@@ -20,7 +21,7 @@ process.argv.shift();
 if(process.argv.includes("-help") || process.argv.includes("-h")) {
     console.log(`
                 
-                    Welcome to the EucoAPIClient help menu!
+                    ➡ Welcome to the EucoAPIClient help menu!
 
     COMMAND     USAGE                                                   ALIAS               
     ---------------------------------------------------------------------------
