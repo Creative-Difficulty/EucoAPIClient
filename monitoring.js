@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 //TODO: migrate to react
 import fs from "fs"
 import fetch from "node-fetch"
@@ -96,14 +97,14 @@ var LoggedNum = 0
 var recievedJSON
 var parseableData
 
-await fetch("http://10.0.0.23:8082")
+await fetch("https://eucoapi.herokuapp.com")
 
 setInterval(fetchJSON, 10000)
 const Appendstream = fs.createWriteStream(path.join(__dirname, "pages", "main", "DB", newDBName), {flags:'a'});
 
 
 async function fetchJSON() {
-    await fetch("http://10.0.0.23:8082").then(jsonData => jsonData.json()).then(jsonData => {
+    await fetch("https://eucoapi.herokuapp.com").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
     })
     
