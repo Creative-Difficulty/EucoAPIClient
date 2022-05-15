@@ -52,21 +52,8 @@
                 var values = [];
                 var FileSelectData = [];
 
-                $.ajax ({
-                    url: "/DB",
-                    method: 'GET',
-                    dataType: 'json'
-                }).done(function(data) {
-                    if (typeof data === 'object' && typeof data !== null) {
-                        // List the movies
-                        for(var movie in data.movies) {
-                            var movieDiv = '<div class="movie-item" data-id="' + movie.id + '">' +
-                                '<img src="' + movie.thumbnail_path + '"><br>' +
-                                '<p>' + movie.title + '</p>' +
-                                '</div>';
-                            $('#my-container-div').append(movieDiv);
-                        }
-                    }
+                $.get("/DB", function(data) {
+                    alert("Server Returned: " + data);
                 });
 
                 // $.get 
