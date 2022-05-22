@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 //TODO: migrate to react
 import fs from "fs"
 import fetch from "node-fetch"
@@ -8,7 +9,6 @@ import isPi from "detect-rpi"
 import { zip } from "zip-a-folder";
 const __dirname = path.resolve()
 
-console.log(path.join(__dirname, "..", "Frontend", "pages", "main", "DB"))
 logger.setLevel("success")
 if(isPi()) {
     console.log("EucoAPIClient is running on a Raspberry Pi !\n Initializing Pi-only features")
@@ -37,7 +37,7 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
 } else if(process.argv.includes("-clear") || process.argv.includes("-c") || process.argv.includes("-delete") || process.argv.includes("-del")) {
     console.log("Deleting all files in the database...");
     const clearBar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-    const directory = path.join(__dirname, "..", "Frontend", "pages", "main", "DB");
+    const directory = path.join(__dirname, "pages", "main", "DB");
 
     fs.readdir(directory, (err, files) => {
         var filesList = [];
@@ -65,7 +65,7 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
 
     
 } else if (process.argv.includes("-list") || process.argv.includes("-l")) {
-    fs.readdir(path.join(__dirname, "DB"), function (err, files) {
+    fs.readdir(path.join(__dirname, "pages", "main", "DB"), function (err, files) {
         if (err) {
             return console.log('Unable to scan directory: ' + err);
         }
@@ -80,7 +80,7 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
     var currentdate = new Date();
     var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds() + "-Backup.zip";
     const zipLocation = path.join(__dirname, "ZIPs", datetime);
-    await zip(path.join(__dirname, "..", "Frontend", "pages", "main", "DB"), zipLocation);
+    await zip(path.join(__dirname, "pages", "main", "DB"), zipLocation);
     exit(0)
 }
 
@@ -88,7 +88,7 @@ var currentdate = new Date();
 var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
 var newDBName = "DB-" + datetime + ".txt";
 
-fs.open(path.join(__dirname, "..", "Frontend", "pages", "main", "DB", newDBName), 'w', function (err, file) {
+fs.open(path.join(__dirname, "pages", "main", "DB", newDBName), 'w', function (err, file) {
     if (err) throw err;
     console.log("Created new database file with name: " + newDBName);
 });
@@ -97,14 +97,14 @@ var LoggedNum = 0
 var recievedJSON
 var parseableData
 
-await fetch("http://10.0.0.23:8082")
+await fetch("https://eucoapi.herokuapp.com")
 
 setInterval(fetchJSON, 10000)
-const Appendstream = fs.createWriteStream(path.join(__dirname, "..", "Frontend", "pages", "main", "DB", newDBName), {flags:'a'});
+const Appendstream = fs.createWriteStream(path.join(__dirname, "pages", "main", "DB", newDBName), {flags:'a'});
 
 
 async function fetchJSON() {
-    await fetch("http://10.0.0.23:8082").then(jsonData => jsonData.json()).then(jsonData => {
+    await fetch("https://eucoapi.herokuapp.com").then(jsonData => jsonData.json()).then(jsonData => {
         recievedJSON = jsonData
     })
     

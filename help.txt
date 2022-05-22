@@ -1,0 +1,5 @@
+use: 
+
+npm run monitoring -- <args>
+
+to launch the monitoring process with arguments

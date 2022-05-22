@@ -1,2 +1,6 @@
 #! /bin/bash
-cd Backend && npm install -g index.js && cd ../Frontend/pages/main && npm install -g server.js
+curl https://github.com/creative-difficulty/eucoapiclient/releases/latest &&
+unzip EucoAPIClient.zip &&
+cd EucoAPIClient &&
+npm i &&
+sudo npm link

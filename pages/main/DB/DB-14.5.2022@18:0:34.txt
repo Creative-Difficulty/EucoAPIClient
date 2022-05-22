@@ -1,0 +1,12 @@
+time=16:0:44,cpu_model=Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz,cpu_speed=2499,cpu_usage=45.09,total_ram=63631.32,used_ram=37887.24,free_ram=25744.08,total_storageGB=2.2,free_storageGB=1.6,used_storageGB=0.6,os_name=Focal Fossa,os_version=20.04.4 LTS,os_architecture=x64,local_ip=8b3ca036-cee4-45a0-8da5-4ef3486adb10,pc_serial_number=,uefi_is_enabled=false,os_text_encoding=UTF-8
+time=16:0:54,cpu_model=Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz,cpu_speed=2499,cpu_usage=43.29,total_ram=63631.32,used_ram=37949.64,free_ram=25681.68,total_storageGB=2.2,free_storageGB=1.6,used_storageGB=0.6,os_name=Focal Fossa,os_version=20.04.4 LTS,os_architecture=x64,local_ip=8b3ca036-cee4-45a0-8da5-4ef3486adb10,pc_serial_number=,uefi_is_enabled=false,os_text_encoding=UTF-8
+time=16:1:4,cpu_usage=33.33,used_ram=37872.89,free_ram=25758.43,free_storageGB=1.6,used_storageGB=0.6
+time=16:1:14,cpu_usage=54.64,used_ram=37888.71,free_ram=25742.61,free_storageGB=1.6,used_storageGB=0.6
+time=16:1:24,cpu_usage=61.73,used_ram=38032.85,free_ram=25598.47,free_storageGB=1.6,used_storageGB=0.6
+time=16:1:34,cpu_usage=48.21,used_ram=38139.78,free_ram=25491.54,free_storageGB=1.6,used_storageGB=0.6
+time=16:1:44,cpu_usage=75.38,used_ram=38399.5,free_ram=25231.82,free_storageGB=1.6,used_storageGB=0.6
+time=16:1:54,cpu_usage=56.33,used_ram=38242.64,free_ram=25388.68,free_storageGB=1.6,used_storageGB=0.6
+time=16:2:4,cpu_usage=50.91,used_ram=38277.43,free_ram=25353.89,free_storageGB=1.6,used_storageGB=0.6
+time=16:2:14,cpu_usage=34.24,used_ram=38164.09,free_ram=25467.23,free_storageGB=1.6,used_storageGB=0.6
+time=16:2:24,cpu_usage=50.26,used_ram=38220.69,free_ram=25410.63,free_storageGB=1.6,used_storageGB=0.6
+time=16:2:34,cpu_usage=33.03,used_ram=38192.21,free_ram=25439.11,free_storageGB=1.6,used_storageGB=0.6

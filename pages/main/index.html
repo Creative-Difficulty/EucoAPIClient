@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>EuconetAPIClient</title>
+        <link rel="icon" type="image/x-icon" href="./img/favicon.ico">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="   crossorigin="anonymous"></script>
+        <script type="text/plain" src="./lib/chartjs-3.7.1.js"></script>
+        <script type="text/plain" src="./lib/hammer-2.0.8.js"></script>
+        <script type="text/plain" src="./lib/chartjs-plugin-zoom-1.2.1.js"></script>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    
+    
+    <body>
+        <div id="chartSwitch">
+            <div id="seperateCharts">Show seperate charts</div>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <div id="oneChart">Show all data in one chart</div>
+        </div>
+
+        <div class="TimeSwitch">
+            <div id="ServerTime">Show Server Time</div>
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider round"></span>
+            </label>
+            <div id="ClientTime">Show Client Time</div>
+            Select database file <select id="FileSelect"><option value="none" selected>none</option></select>
+        </div>
+        
+
+        <div id="cpudiv">
+            <div id="cpuHeading_svg"><img src="./img/cpu_icon.svg" /></div>
+            <div id="cpuHeading_text">CPU</div>
+            <div id="cpu_params">
+                <div id="cpu_model"> </div>
+                <div id="avg_cpu_usage"></div>
+                <div id="max_cpu_usage"></div>
+                <div id="min_cpu_usage"></div>
+                <div id="cpu_speed"></div>
+            </div>
+            <canvas id="cpuchart" width="1000px" height="200px"></canvas>
+            
+            <script>
+                var labels = [];
+                var values = [];
+                var FileSelectData = [];
+
+                $.get("/DB", function(data) {
+                    alert("Server Returned: " + data);
+                });
+
+                // $.get 
+                //     if(getDBList.readyState === 4) {
+                //         if(getDBList.status === 200 || getDBList.status == 0) {
+                //             const data = getDBList.responseText
+                //             console.loG(data)
+                //             for (let i = 0; i < data.length; i++) {
+                //                 $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
+                //                 FileSelectData.push(data[i]);
+                //             }
+                //             if (data.length === 0) {
+                //                 $("#FileSelect").append(new Option("Database is empty", "no_db"))
+                //                 FileSelectData.push("none")
+                //             }
+                //         }
+                //     }
+                // }
+
+                //on fileselct change get db data, put into chartjs.
+                // $("#FileSelect").change(function(){
+                //     if($("#FileSelect option:selected").val() === "none"  || $("#FileSelect option:selected").val() === "no_db") {
+                //         return;
+                //     }
+                //     var openDB = new XMLHttpRequest()
+                //     var DBpath = "../../../Backend/DB/" + $("#FileSelect option:selected").val();
+                //     openDB.open("GET", DBpath, false);
+                //     openDB.onreadystatechange = function () {
+                //         if(openDB.readyState === 4) {
+                //             if(openDB.status === 200 || openDB.status == 0) {
+    
+                //                 var lines = openDB.responseText.split("\n");
+                //                 for(var i = 0;i < lines.length;i++) {
+                //                     if(lines === 1) {
+                //                         console.log(lines[1])
+                //                     }
+                //                 }
+                                
+                //                 var recievedJSON = JSON.parse(openDB.responseText);
+                //                 console.log(recievedJSON)
+                //                 var keys = Object.keys(recievedJSON);
+                //                 for (let i = 0; i < keys.length; i++) {
+                //                     var currentJSON = JSON.parse(recievedJSON[i]);
+                //                     if(i === 0) {
+                //                         var cpu_model = currentJSON["cpu_model"].replace("(R)", "&reg;").replace("(TM)", "&trade;")
+                //                         document.getElementById("cpu_model").innerHTML = "CPU Model: " + cpu_model;
+                //                         var cpu_speed = currentJSON["cpu_speed"]
+                //                         document.getElementById("cpu_speed").innerHTML = "CPU Speed: " + cpu_speed + "MHz";
+                //                     }
+                //                     values.push(currentJSON["cpu_usage"]);
+                //                     labels.push(currentJSON["time"]);
+                //                 }
+                                
+    
+                //                 var maxCPUusage = Math.max.apply(null, values)
+                //                 var minCPUusage = Math.min.apply(null, values)
+                //                 var TimeAtmaxCpuUsage = labels[values.indexOf(Math.max.apply(null, values))]
+                //                 var TimeAtminCpuUsage = labels[values.indexOf(Math.min.apply(null, values))]
+    
+                //                 var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
+                //                 var avg_cpu_usage = sumOfValues / values.length;
+    
+                //                 var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
+                //                 document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
+                //                 document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage
+                //                 document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage
+                                
+                //             }
+                //         }
+                //     }
+                //     openDB.send(null);
+                // })
+                
+                
+                
+                
+                
+                
+                // var ctx = document.getElementById("cpuchart").getContext("2d");
+                // var cpuchartelement = new Chart(ctx, {
+                //     type: 'line',
+                //     data: {
+                //         labels: labels,
+                //         datasets: [{
+                //             label: "CPU usage",
+                //             data: values,
+                //             fill: false,
+                //             borderColor: "#bae755",
+                //             borderWidth : 0.7,
+                //             backgroundColor: "#bae755",
+                //             tension: 0,
+                //             pointRadius: 1,
+                //             pointHitRadius: 300
+                //         }],
+                //     },
+                    
+                //     options: {
+                //         plugins: {
+                //             zoom: {
+                //                 pan: {
+                //                     enabled: true,
+                //                     mode: "xy"
+                //                 },
+                //                 limits: {
+                //                     y: {min: 0, max: 100},
+                //                 },
+                //                 zoom: {
+                //                     wheel: {
+                //                         enabled: true
+                //                     }
+                //                 }
+                //             }
+                //         },
+                //         animation: true,
+                //         responsive: true,
+                //         scales: {
+                //             y: {
+                //                 beginAtZero: true,
+                //                 min: 0,
+                //                 max: 100
+                //             }
+                //         }
+                //     }
+                // })
+
+                // function resetCPUChartZoom() {
+                //     cpuchartelement.resetZoom();
+                // }
+            </script>
+            
+            <button id="cpuInfoZoomBtn"  onclick="resetCPUChartZoom()">Reset Zoom</button>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div id="ramdiv">
+
+            <div id="ramHeading_svg"><img src="./img/ram_icon.svg" /></div>
+            <div id="ramHeading_text">RAM</div>
+
+            <div id="ram_params">
+                <div id="avg_ram_usage"></div>
+                <div id="min_ram_usage"></div>
+                <div id="max_ram_usage"></div>
+                <div id="total_ram"></div>
+            </div>
+            <canvas id="ramchartelement" width="1000px" height="200px"></canvas>
+            
+            <script>
+                // var maxRAMusage;
+
+                // //with GB or MB as unit
+                // function formatBytesHuman(bytes, decimals = 2) {
+                //     if (bytes === 0) return '0 Bytes';
+
+                //     const k = 1024;
+                //     const dm = decimals < 0 ? 0 : decimals;
+                //     const sizes = ['MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+                //     const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                //     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+                // }
+
+                // //without, for chartjs and other computing usages
+                // function formatBytes(bytes, decimals = 2) {
+                //     if (bytes === 0) return '0 Bytes';
+
+                //     const k = 1024;
+                //     const dm = decimals < 0 ? 0 : decimals;
+
+                //     const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                //     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+                // }
+
+                // var labels = [];
+                // var values = [];
+                
+                
+                
+                // var rawFile = new XMLHttpRequest();
+                // rawFile.open("GET", "../../../Backend/DB/DB.txt", false);
+                // rawFile.onreadystatechange = function () {
+                //     if(rawFile.readyState === 4) {
+                //         if(rawFile.status === 200 || rawFile.status == 0) {
+                //             var recievedJSON = JSON.parse(rawFile.responseText);
+                //             var keys = Object.keys(recievedJSON);
+                //             for (let i = 0; i < keys.length; i++) {
+                //                 var currentJSON = JSON.parse(recievedJSON[i]);
+                //                 if(i === 0) {
+                //                     var totalRAM = formatBytesHuman(currentJSON["total_ram"]);
+                //                     document.getElementById("total_ram").innerHTML = "Total RAM: " + totalRAM;
+                //                 }
+                //                 if(currentJSON["time"])
+                //                 values.push(formatBytes(currentJSON["free_ram"].toFixed(2)));
+                //                 labels.push(currentJSON["time"]);
+                //             }
+                //             console.log(values)
+                            
+
+                //             maxRAMusage = Math.max.apply(null, values)
+                //             var minRAMusage = Math.min.apply(null, values)
+                //             var TimeAtmaxRAMUsage = labels[values.indexOf(Math.max.apply(null, values))]
+                //             var TimeAtminRAMUsage = labels[values.indexOf(Math.min.apply(null, values))]
+
+                //             var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(this).toFixed(2))
+                //             var avgRAMusage = sumOfValues / values.length;
+
+                //             document.getElementById("avg_ram_usage").innerHTML = "Average RAM usage: " + avgRAMusage.toFixed(2) + "GB"
+                //             document.getElementById("max_ram_usage").innerHTML = "Maximum RAM usage: " + maxRAMusage + "GB " + "@" + TimeAtmaxRAMUsage
+                //             document.getElementById("min_ram_usage").innerHTML = "Minimum RAM usage: " + minRAMusage + "GB " + "@" + TimeAtminRAMUsage
+                //         }
+                //     }
+                // }
+                
+                // rawFile.send(null);
+                
+                
+                
+                // var config = {
+                //     plugins: {
+                //         zoom: {
+                //             pan: {
+                //                 enabled: true,
+                //                 mode: "xy"
+                //             },
+                //             limits: {
+                //                 y: {min: 0},
+                //             },
+                //             zoom: {
+                //                 wheel: {
+                //                     enabled: true
+                //                 }
+                //             }
+                //         }
+                //     },
+                //     animation: true,
+                //     responsive: true,
+                //     scales: {
+                //         y: {
+                //             ticks: {
+                //                 callback: function (value) {
+                //                     return value + " GB"
+                //                 }
+                //             },
+                //             beginAtZero: true,
+                //             min: 0,
+                //             max: 0
+                //         }
+                //     }
+                // }
+
+                // config.scales.y.max = maxRAMusage.toFixed(0) * 2;
+                
+                // var ctx = document.getElementById("ramchartelement").getContext("2d");
+                // var ramchart = new Chart(ctx, {
+                //     type: 'line',
+                //     data: {
+                //         labels: labels,
+                //         datasets: [{
+                //             label: "RAM usage",
+                //             data: values,
+                //             fill: false,
+                //             borderColor: "#bae755",
+                //             borderWidth : 0.7,
+                //             backgroundColor: "#bae755",
+                //             tension: 0,
+                //             pointRadius: 1,
+                //             pointHitRadius: 300
+                //         }],
+                //     },
+                    
+                //     options: config
+                // })
+
+                // function resetRAMChartZoom() {
+                //     ramchart.resetZoom();
+                // }
+                </script>
+                <noscript>Please enable javascript in your browser to use this website!</noscript>
+            <button id="ramInfoZoomBtn"  onclick="resetRAMChartZoom()">Reset Zoom</button>
+        </div>
+    </body>
+    </html>
