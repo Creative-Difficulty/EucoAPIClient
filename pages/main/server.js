@@ -3,7 +3,7 @@ import express from "express";
 import { isIP } from "net";
 import path from "path";
 import logger from "node-color-log"
-import dotenv from 'dotenv'
+import dotenv from "dotenv"
 const __dirname = path.resolve()
 const configPath = path.join(__dirname + "../../")
 dotenv.config(configPath)
@@ -28,7 +28,7 @@ if (process.env.mode === "normal" || process.env.mode === "production" || proces
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use("/style.css", express.static(path.join(__dirname, "style.css")));
 app.use("/lib", express.static(path.join(__dirname, "js")));
-app.use(express.static("DB"));
+//app.use(express.static("DB"));
 
 
 app.get("/", (req, res) => {

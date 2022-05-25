@@ -5,16 +5,16 @@ import fetch from "node-fetch"
 import path from "path";
 import logger from "node-color-log"
 import { exit } from "process";
-import isPi from "detect-rpi"
 import { zip } from "zip-a-folder";
 const __dirname = path.resolve()
 
 logger.setLevel("success")
-if(isPi()) {
-    console.log("EucoAPIClient is running on a Raspberry Pi !\n Initializing Pi-only features")
-} else {
-    console.log("EucoAPIClient is running on a desktop computer")
-}
+// if(isPi()) {
+//     console.log("EucoAPIClient is running on a Raspberry Pi !\n Initializing Pi-only features")
+// } else {
+//     console.log("EucoAPIClient is running on a desktop computer")
+// }
+
 process.argv.shift();
 process.argv.shift();
 
