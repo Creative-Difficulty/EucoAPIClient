@@ -1,0 +1,35 @@
+time=9:26:25,cpu_model=Intel(R) Xeon(R) Platinum 8175M CPU @ 2.50GHz,cpu_speed=2499,cpu_usage=12.07,total_ram=63631.32,used_ram=34087.09,free_ram=29544.23,total_storageGB=2.2,free_storageGB=1.6,used_storageGB=0.6,os_name=Focal Fossa,os_version=20.04.4 LTS,os_architecture=x64,local_ip=81027e07-2dd7-4135-97b2-a6750a3baef4,pc_serial_number=,uefi_is_enabled=false,os_text_encoding=UTF-8
+time=9:26:35,cpu_model=Intel(R) Xeon(R) Platinum 8175M CPU @ 2.50GHz,cpu_speed=2499,cpu_usage=14.08,total_ram=63631.32,used_ram=34133.38,free_ram=29497.94,total_storageGB=2.2,free_storageGB=1.6,used_storageGB=0.6,os_name=Focal Fossa,os_version=20.04.4 LTS,os_architecture=x64,local_ip=81027e07-2dd7-4135-97b2-a6750a3baef4,pc_serial_number=,uefi_is_enabled=false,os_text_encoding=UTF-8
+time=9:26:45,cpu_usage=33.63,used_ram=34021.25,free_ram=29610.07,free_storageGB=1.6,used_storageGB=0.6
+time=9:26:55,cpu_usage=16.71,used_ram=33902.09,free_ram=29729.23,free_storageGB=1.6,used_storageGB=0.6
+time=9:27:5,cpu_usage=19.84,used_ram=33927.71,free_ram=29703.61,free_storageGB=1.6,used_storageGB=0.6
+time=9:27:15,cpu_usage=45.92,used_ram=33911.09,free_ram=29720.23,free_storageGB=1.6,used_storageGB=0.6
+time=9:27:25,cpu_usage=62.85,used_ram=34063.46,free_ram=29567.86,free_storageGB=1.6,used_storageGB=0.6
+time=9:27:35,cpu_usage=27.13,used_ram=33890.54,free_ram=29740.78,free_storageGB=1.6,used_storageGB=0.6
+time=9:27:45,cpu_usage=42.61,used_ram=33930.47,free_ram=29700.85,free_storageGB=1.6,used_storageGB=0.6
+time=9:27:55,cpu_usage=48.19,used_ram=33943.92,free_ram=29687.4,free_storageGB=1.6,used_storageGB=0.6
+time=9:28:5,cpu_usage=28.81,used_ram=34079.63,free_ram=29551.69,free_storageGB=1.6,used_storageGB=0.6
+time=9:28:15,cpu_usage=16.84,used_ram=34041.8,free_ram=29589.52,free_storageGB=1.6,used_storageGB=0.6
+time=9:28:25,cpu_usage=15.94,used_ram=34110.29,free_ram=29521.03,free_storageGB=1.6,used_storageGB=0.6
+time=9:28:35,cpu_usage=25.26,used_ram=34108.6,free_ram=29522.72,free_storageGB=1.6,used_storageGB=0.6
+time=9:28:45,cpu_usage=18.4,used_ram=34158.59,free_ram=29472.73,free_storageGB=1.6,used_storageGB=0.6
+time=9:28:55,cpu_usage=28.07,used_ram=34095.2,free_ram=29536.12,free_storageGB=1.6,used_storageGB=0.6
+time=9:29:5,cpu_usage=24.14,used_ram=34067.81,free_ram=29563.51,free_storageGB=1.6,used_storageGB=0.6
+time=9:29:15,cpu_usage=40.87,used_ram=34280.33,free_ram=29350.99,free_storageGB=1.6,used_storageGB=0.6
+time=9:29:25,cpu_usage=16.41,used_ram=34167.82,free_ram=29463.5,free_storageGB=1.6,used_storageGB=0.6
+time=9:29:35,cpu_usage=47.96,used_ram=34178.16,free_ram=29453.16,free_storageGB=1.6,used_storageGB=0.6
+time=9:29:45,cpu_usage=29.94,used_ram=34153.18,free_ram=29478.14,free_storageGB=1.6,used_storageGB=0.6
+time=9:29:55,cpu_usage=27.44,used_ram=34136.97,free_ram=29494.35,free_storageGB=1.6,used_storageGB=0.6
+time=9:30:5,cpu_usage=38.39,used_ram=34131.57,free_ram=29499.75,free_storageGB=1.6,used_storageGB=0.6
+time=9:30:15,cpu_usage=40.45,used_ram=34287.89,free_ram=29343.43,free_storageGB=1.6,used_storageGB=0.6
+time=9:30:25,cpu_usage=19.89,used_ram=34458.14,free_ram=29173.18,free_storageGB=1.6,used_storageGB=0.6
+time=9:30:35,cpu_usage=35.2,used_ram=34503.21,free_ram=29128.11,free_storageGB=1.6,used_storageGB=0.6
+time=9:30:45,cpu_usage=48.1,used_ram=34644.7,free_ram=28986.62,free_storageGB=1.6,used_storageGB=0.6
+time=9:30:55,cpu_usage=28.35,used_ram=34499.71,free_ram=29131.61,free_storageGB=1.6,used_storageGB=0.6
+time=9:31:5,cpu_usage=41.77,used_ram=34515.75,free_ram=29115.57,free_storageGB=1.6,used_storageGB=0.6
+time=9:31:15,cpu_usage=71.61,used_ram=34488.54,free_ram=29142.78,free_storageGB=1.6,used_storageGB=0.6
+time=9:31:25,cpu_usage=44.9,used_ram=34786.55,free_ram=28844.77,free_storageGB=1.6,used_storageGB=0.6
+time=9:31:35,cpu_usage=49.48,used_ram=34672.57,free_ram=28958.75,free_storageGB=1.6,used_storageGB=0.6
+time=9:31:45,cpu_usage=36.54,used_ram=34772.64,free_ram=28858.68,free_storageGB=1.6,used_storageGB=0.6
+time=9:31:55,cpu_usage=46.81,used_ram=34679.76,free_ram=28951.56,free_storageGB=1.6,used_storageGB=0.6
+time=9:32:5,cpu_usage=52.84,used_ram=34607.99,free_ram=29023.33,free_storageGB=1.6,used_storageGB=0.6

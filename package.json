@@ -6,7 +6,8 @@
   "main": "monitoring.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "website" : "cd pages/main && node server.js"
+    "website" : "cd pages/main && node server.js",
+    "monitoring": "node monitoring.js"
   },
   "repository": {
     "type": "git",
