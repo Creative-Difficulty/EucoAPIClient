@@ -27,6 +27,7 @@
     "node-color-log": "^9.0.0",
     "node-fetch": "^3.2.4",
     "path": "^0.12.7",
+    "util": "^0.12.4",
     "zip-a-folder": "^1.1.3"
   }
 }

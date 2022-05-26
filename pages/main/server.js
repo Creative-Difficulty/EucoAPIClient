@@ -53,6 +53,18 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"))
 })
 
+app.get("/DBList", (req, res) => {
+  fs.readdir("./DB", (err, files) => {
+    if (err)
+      res.send(err.message);
+    else {
+      res.send(files);
+    }
+  })
+})
+
+
+
 
 app.listen(process.env.port, () => {
   logger.info("EucoAPIClient dashboard running at http://localhost:" + process.env.port);
