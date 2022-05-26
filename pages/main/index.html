@@ -52,6 +52,11 @@
                 var values = [];
                 var FileSelectData = [];
 
+                $.get("/DBList", (data) => {
+                    for(let i=0; i<data.length; i++) {
+                        $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
+                    }
+                });
                 // var filenames=[], foldernames=[];
                 // var url = "file://DB";
                 // var req = new XMLHttpRequest();
@@ -92,59 +97,63 @@
                 //     }
                 // }
 
-                //on fileselct change get db data, put into chartjs.
-                // $("#FileSelect").change(function(){
-                //     if($("#FileSelect option:selected").val() === "none"  || $("#FileSelect option:selected").val() === "no_db") {
-                //         return;
-                //     }
-                //     var openDB = new XMLHttpRequest()
-                //     var DBpath = "../../../Backend/DB/" + $("#FileSelect option:selected").val();
-                //     openDB.open("GET", DBpath, false);
-                //     openDB.onreadystatechange = function () {
-                //         if(openDB.readyState === 4) {
-                //             if(openDB.status === 200 || openDB.status == 0) {
+
+                $("#FileSelect").change(function() {
+                    if($("#FileSelect option:selected").val() === "none"  || $("#FileSelect option:selected").val() === "no_db") {
+                        return;
+                    }
+                    var DBpath = "/DB/" + $("#FileSelect option:selected").val();
+                    $.get(DBpath, (data) => {
+                        alert(data)
+                    });
+                    // var openDB = new XMLHttpRequest()
+                    // var DBpath = "../../../Backend/DB/" + $("#FileSelect option:selected").val();
+                    // openDB.open("GET", DBpath, false);
+                    // openDB.onreadystatechange = function () {
+                    //     if(openDB.readyState === 4) {
+                    //         if(openDB.status === 200 || openDB.status == 0) {
     
-                //                 var lines = openDB.responseText.split("\n");
-                //                 for(var i = 0;i < lines.length;i++) {
-                //                     if(lines === 1) {
-                //                         console.log(lines[1])
-                //                     }
-                //                 }
+                    //             var lines = openDB.responseText.split("\n");
+                    //             for(var i = 0;i < lines.length;i++) {
+                    //                 if(lines === 1) {
+                    //                     console.log(lines[1])
+                    //                 }
+                    //             }
                                 
-                //                 var recievedJSON = JSON.parse(openDB.responseText);
-                //                 console.log(recievedJSON)
-                //                 var keys = Object.keys(recievedJSON);
-                //                 for (let i = 0; i < keys.length; i++) {
-                //                     var currentJSON = JSON.parse(recievedJSON[i]);
-                //                     if(i === 0) {
-                //                         var cpu_model = currentJSON["cpu_model"].replace("(R)", "&reg;").replace("(TM)", "&trade;")
-                //                         document.getElementById("cpu_model").innerHTML = "CPU Model: " + cpu_model;
-                //                         var cpu_speed = currentJSON["cpu_speed"]
-                //                         document.getElementById("cpu_speed").innerHTML = "CPU Speed: " + cpu_speed + "MHz";
-                //                     }
-                //                     values.push(currentJSON["cpu_usage"]);
-                //                     labels.push(currentJSON["time"]);
-                //                 }
+                    //             var recievedJSON = JSON.parse(openDB.responseText);
+                    //             console.log(recievedJSON)
+                    //             var keys = Object.keys(recievedJSON);
+                    //             for (let i = 0; i < keys.length; i++) {
+                    //                 var currentJSON = JSON.parse(recievedJSON[i]);
+                    //                 if(i === 0) {
+                    //                     var cpu_model = currentJSON["cpu_model"].replace("(R)", "&reg;").replace("(TM)", "&trade;")
+                    //                     document.getElementById("cpu_model").innerHTML = "CPU Model: " + cpu_model;
+                    //                     var cpu_speed = currentJSON["cpu_speed"]
+                    //                     document.getElementById("cpu_speed").innerHTML = "CPU Speed: " + cpu_speed + "MHz";
+                    //                 }
+                    //                 values.push(currentJSON["cpu_usage"]);
+                    //                 labels.push(currentJSON["time"]);
+                    //             }
                                 
     
-                //                 var maxCPUusage = Math.max.apply(null, values)
-                //                 var minCPUusage = Math.min.apply(null, values)
-                //                 var TimeAtmaxCpuUsage = labels[values.indexOf(Math.max.apply(null, values))]
-                //                 var TimeAtminCpuUsage = labels[values.indexOf(Math.min.apply(null, values))]
+                    //             var maxCPUusage = Math.max.apply(null, values)
+                    //             var minCPUusage = Math.min.apply(null, values)
+                    //             var TimeAtmaxCpuUsage = labels[values.indexOf(Math.max.apply(null, values))]
+                    //             var TimeAtminCpuUsage = labels[values.indexOf(Math.min.apply(null, values))]
     
-                //                 var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
-                //                 var avg_cpu_usage = sumOfValues / values.length;
+                    //             var sumOfValues = values.reduce((partialSum, a) => partialSum + a, 0, sumOfValues = parseFloat(sumOfValues).toFixed(2))
+                    //             var avg_cpu_usage = sumOfValues / values.length;
     
-                //                 var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
-                //                 document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
-                //                 document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage
-                //                 document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage
+                    //             var avg_cpu_usage = parseFloat(avg_cpu_usage).toFixed(2) + "%";
+                    //             document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage
+                    //             document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage
+                    //             document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage
                                 
-                //             }
-                //         }
-                //     }
-                //     openDB.send(null);
-                // })
+                    //         }
+                    //     }
+                    // }
+                    // openDB.send(null);
+                })
                 
                 
                 
