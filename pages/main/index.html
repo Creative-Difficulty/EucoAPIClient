@@ -7,9 +7,9 @@
         <title>EuconetAPIClient</title>
         <link rel="icon" type="image/x-icon" href="./img/favicon.ico">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"   integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="   crossorigin="anonymous"></script>
-        <script type="text/plain" src="./lib/chartjs-3.7.1.js"></script>
-        <script type="text/plain" src="./lib/hammer-2.0.8.js"></script>
-        <script type="text/plain" src="./lib/chartjs-plugin-zoom-1.2.1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.1/chartjs-plugin-zoom.min.js" integrity="sha512-klQv6lz2YR+MecyFYMFRuU2eAl8IPRo6zHnsc9n142TJuJHS8CG0ix4Oq9na9ceeg1u5EkBfZsFcV3U7J51iew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link rel="stylesheet" href="style.css">
     </head>
     
@@ -48,8 +48,8 @@
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
             
             <script>
-                var labels = [];
-                var values = [];
+                var Chartlabels = [];
+                var Chartvalues = [];
                 var FileSelectData = [];
 
                 $.get("/DBList", (data) => {
@@ -57,55 +57,37 @@
                         $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
                     }
                 });
-                // var filenames=[], foldernames=[];
-                // var url = "file://DB";
-                // var req = new XMLHttpRequest();
-                // req.open("GET",url,true);
-                // req.onreadystatechange=function(){
-                //     if(req.readyState === 4)
-                //     {
-                //         document.write(req.responseText);
-                //         getNames();
-                //     }
-                // };
-                // req.send();
-
-                // function getNames()
-                // {
-                //     var files = document.querySelectorAll("a.icon.file");
-                //     var folders = document.querySelectorAll("a.icon.dir");
-                //     files.forEach(function(item){filenames.push(item.textContent)})
-                //     folders.forEach(function(item){foldernames.push(item.textContent.slice(0,-1))})
-                //     console.log(filenames);
-                //     console.log(foldernames);
-                // }
-
-                // $.get 
-                //     if(getDBList.readyState === 4) {
-                //         if(getDBList.status === 200 || getDBList.status == 0) {
-                //             const data = getDBList.responseText
-                //             console.loG(data)
-                //             for (let i = 0; i < data.length; i++) {
-                //                 $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
-                //                 FileSelectData.push(data[i]);
-                //             }
-                //             if (data.length === 0) {
-                //                 $("#FileSelect").append(new Option("Database is empty", "no_db"))
-                //                 FileSelectData.push("none")
-                //             }
-                //         }
-                //     }
-                // }
 
 
                 $("#FileSelect").change(function() {
+                    function removeData() {
+                        
+                        for(let i=0; i<cpuchartelement["data"]["labels"].length; i++) {
+                            cpuchartelement.data.labels.pop();
+                        }
+                        cpuchartelement.update();
+                    }
                     if($("#FileSelect option:selected").val() === "none"  || $("#FileSelect option:selected").val() === "no_db") {
                         return;
+                    } else {
+                        var DBpath = "/DB/" + $("#FileSelect option:selected").val();
+                        $.get(DBpath, (data) => {
+                            var lines = data.split('\n');
+                            for(var i = 0;i < lines.length;i++) {
+                                var values = lines[i].split(",")
+                                for(let i = 0;i < values.length;i++) {
+                                    if(values[i].includes("cpu_usage=")) {
+                                        Chartvalues.push(values[i].split("=")[1])
+                                    }
+                                    if(values[i].includes("time=")) {
+                                        Chartlabels.push(values[i].split("=")[1])
+                                    }
+                                }
+                            }
+                            cpuchartelement["data"]["labels"].length
+                        });
                     }
-                    var DBpath = "/DB/" + $("#FileSelect option:selected").val();
-                    $.get(DBpath, (data) => {
-                        alert(data)
-                    });
+
                     // var openDB = new XMLHttpRequest()
                     // var DBpath = "../../../Backend/DB/" + $("#FileSelect option:selected").val();
                     // openDB.open("GET", DBpath, false);
@@ -157,59 +139,59 @@
                 
                 
                 
-                
-                
-                
-                // var ctx = document.getElementById("cpuchart").getContext("2d");
-                // var cpuchartelement = new Chart(ctx, {
-                //     type: 'line',
-                //     data: {
-                //         labels: labels,
-                //         datasets: [{
-                //             label: "CPU usage",
-                //             data: values,
-                //             fill: false,
-                //             borderColor: "#bae755",
-                //             borderWidth : 0.7,
-                //             backgroundColor: "#bae755",
-                //             tension: 0,
-                //             pointRadius: 1,
-                //             pointHitRadius: 300
-                //         }],
-                //     },
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: Chartlabels,
+                        datasets: [{
+                            label: "CPU usage",
+                            data: Chartvalues,
+                            fill: false,
+                            borderColor: "#bae755",
+                            borderWidth : 0.7,
+                            backgroundColor: "#bae755",
+                            tension: 0,
+                            pointRadius: 1,
+                            pointHitRadius: 300
+                        }],
+                    },
                     
-                //     options: {
-                //         plugins: {
-                //             zoom: {
-                //                 pan: {
-                //                     enabled: true,
-                //                     mode: "xy"
-                //                 },
-                //                 limits: {
-                //                     y: {min: 0, max: 100},
-                //                 },
-                //                 zoom: {
-                //                     wheel: {
-                //                         enabled: true
-                //                     }
-                //                 }
-                //             }
-                //         },
-                //         animation: true,
-                //         responsive: true,
-                //         scales: {
-                //             y: {
-                //                 beginAtZero: true,
-                //                 min: 0,
-                //                 max: 100
-                //             }
-                //         }
-                //     }
-                // })
+                    options: {
+                        plugins: {
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: "xy"
+                                },
+                                limits: {
+                                    y: {min: 0, max: 100},
+                                },
+                                zoom: {
+                                    wheel: {
+                                        enabled: true
+                                    }
+                                }
+                            }
+                        },
+                        animation: true,
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 100
+                            }
+                        }
+                    }
+                }
+                
+                
+                var ctx = document.getElementById("cpuchart").getContext("2d");
+                var cpuchartelement = new Chart(ctx, config)
 
-                // function resetCPUChartZoom() {
-                //     cpuchartelement.resetZoom();
-                // }
+                function resetCPUChartZoom() {
+                    cpuchartelement.resetZoom();
+                }
             </script>
             
             <button id="cpuInfoZoomBtn"  onclick="resetCPUChartZoom()">Reset Zoom</button>
