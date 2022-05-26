@@ -4,6 +4,8 @@ import { isIP } from "net";
 import path from "path";
 import logger from "node-color-log"
 import dotenv from "dotenv"
+import fs from "fs";
+//TODO: at path /DBList readDirectory DB => display alll files in directory
 const __dirname = path.resolve()
 const configPath = path.join(__dirname + "../../")
 dotenv.config(configPath)
@@ -24,7 +26,7 @@ if (process.env.mode === "normal" || process.env.mode === "production" || proces
   process.env.mode = "normal";
 }
 
-
+app.use("/DB", express.static("DB"));
 app.use("/img", express.static(path.join(__dirname, "img")));
 app.use("/style.css", express.static(path.join(__dirname, "style.css")));
 app.use("/lib", express.static(path.join(__dirname, "js")));
