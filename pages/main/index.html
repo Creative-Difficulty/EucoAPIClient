@@ -51,14 +51,15 @@
                 var Chartlabels = [];
                 var Chartvalues = [];
                 var FileSelectData = [];
+                var ctx = document.getElementById("cpuchart").getContext("2d");
 
                 $.get("/DBList", (data) => {
                     for(let i=0; i<data.length; i++) {
                         $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
                     }
                 });
-
-
+                
+                
                 $("#FileSelect").change(function() {
                     function removeData() {
                         
@@ -68,6 +69,7 @@
                         cpuchartelement.update();
                     }
                     if($("#FileSelect option:selected").val() === "none"  || $("#FileSelect option:selected").val() === "no_db") {
+                        if (window.cpuchartelement) window.cpuchartelement.destroy();
                         return;
                     } else {
                         var DBpath = "/DB/" + $("#FileSelect option:selected").val();
@@ -84,8 +86,52 @@
                                     }
                                 }
                             }
-                            cpuchartelement["data"]["labels"].length
                         });
+                        var cpuchartelement = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: Chartlabels,
+                                datasets: [{
+                                    label: "CPU usage",
+                                    data: Chartvalues,
+                                    fill: false,
+                                    borderColor: "#bae755",
+                                    borderWidth : 0.7,
+                                    backgroundColor: "#bae755",
+                                    tension: 0,
+                                    pointRadius: 1,
+                                    pointHitRadius: 300
+                                }],
+                            },
+                            
+                            options: {
+                                plugins: {
+                                    zoom: {
+                                        pan: {
+                                            enabled: true,
+                                            mode: "xy"
+                                        },
+                                        limits: {
+                                            y: {min: 0, max: 100},
+                                        },
+                                        zoom: {
+                                            wheel: {
+                                                enabled: true
+                                            }
+                                        }
+                                    }
+                                },
+                                animation: true,
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        min: 0,
+                                        max: 100
+                                    }
+                                }
+                            }
+                        })
                     }
 
                     // var openDB = new XMLHttpRequest()
@@ -138,56 +184,6 @@
                 })
                 
                 
-                
-                var config = {
-                    type: 'line',
-                    data: {
-                        labels: Chartlabels,
-                        datasets: [{
-                            label: "CPU usage",
-                            data: Chartvalues,
-                            fill: false,
-                            borderColor: "#bae755",
-                            borderWidth : 0.7,
-                            backgroundColor: "#bae755",
-                            tension: 0,
-                            pointRadius: 1,
-                            pointHitRadius: 300
-                        }],
-                    },
-                    
-                    options: {
-                        plugins: {
-                            zoom: {
-                                pan: {
-                                    enabled: true,
-                                    mode: "xy"
-                                },
-                                limits: {
-                                    y: {min: 0, max: 100},
-                                },
-                                zoom: {
-                                    wheel: {
-                                        enabled: true
-                                    }
-                                }
-                            }
-                        },
-                        animation: true,
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                min: 0,
-                                max: 100
-                            }
-                        }
-                    }
-                }
-                
-                
-                var ctx = document.getElementById("cpuchart").getContext("2d");
-                var cpuchartelement = new Chart(ctx, config)
 
                 function resetCPUChartZoom() {
                     cpuchartelement.resetZoom();
