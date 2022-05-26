@@ -50,98 +50,101 @@
             <script>
                 var Chartlabels = [];
                 var Chartvalues = [];
-                var FileSelectData = [];
-                var ctx = document.getElementById("cpuchart").getContext("2d");
-
+                
+                
                 $.get("/DBList", (data) => {
                     for(let i=0; i<data.length; i++) {
-                        $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
+                        if(data.length < 1 || data.length < 0) {
+                            $("#FileSelect").append(new Option("No Database Files", "no_db"))
+                            return;
+                        } else {
+                            $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
+                        }
                     }
                 });
                 
                 
                 $("#FileSelect").change(function() {
-                    function removeData() {
-                        
-                        for(let i=0; i<cpuchartelement["data"]["labels"].length; i++) {
-                            cpuchartelement.data.labels.pop();
-                        }
-                        cpuchartelement.update();
-                    }
-                    if($("#FileSelect option:selected").val() === "none"  || $("#FileSelect option:selected").val() === "no_db") {
-                        if (window.cpuchartelement) window.cpuchartelement.destroy();
-                        return;
-                    } else {
+                    if($("#FileSelect option:selected").val() !== "none"  || $("#FileSelect option:selected").val() !== "no_db") {
                         var DBpath = "/DB/" + $("#FileSelect option:selected").val();
                         $.get(DBpath, (data) => {
-                            var lines = data.split('\n');
-                            for(var i = 0;i < lines.length;i++) {
-                                var values = lines[i].split(",")
-                                for(let i = 0;i < values.length;i++) {
-                                    if(values[i].includes("cpu_usage=")) {
-                                        Chartvalues.push(values[i].split("=")[1])
-                                    }
-                                    if(values[i].includes("time=")) {
-                                        Chartlabels.push(values[i].split("=")[1])
-                                    }
-                                }
-                            }
-                        });
-                        var cpuchartelement = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: Chartlabels,
-                                datasets: [{
-                                    label: "CPU usage",
-                                    data: Chartvalues,
-                                    fill: false,
-                                    borderColor: "#bae755",
-                                    borderWidth : 0.7,
-                                    backgroundColor: "#bae755",
-                                    tension: 0,
-                                    pointRadius: 1,
-                                    pointHitRadius: 300
-                                }],
-                            },
-                            
-                            options: {
-                                plugins: {
-                                    zoom: {
-                                        pan: {
-                                            enabled: true,
-                                            mode: "xy"
-                                        },
-                                        limits: {
-                                            y: {min: 0, max: 100},
-                                        },
-                                        zoom: {
-                                            wheel: {
-                                                enabled: true
-                                            }
+                            if(data.length > 0) {
+                                var lines = data.split('\n');
+                                for(var i = 0;i < lines.length;i++) {
+                                    var values = lines[i].split(",")
+                                    for(let i = 0;i < values.length;i++) {
+                                        if(values[i].includes("cpu_usage=")) {
+                                            Chartvalues.push(values[i].split("=")[1])
+                                        }
+                                        if(values[i].includes("time=")) {
+                                            Chartlabels.push(values[i].split("=")[1])
                                         }
                                     }
-                                },
-                                animation: true,
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        min: 0,
-                                        max: 100
+                                }
+                            } else {
+                                document.write("Empty File")
+                            }
+                        });
+                    }
+                })
+
+                var config = {
+                    type: 'line',
+                        data: {
+                            labels: Chartlabels,
+                            datasets: [{
+                                label: "CPU usage",
+                                data: Chartvalues,
+                                fill: false,
+                                borderColor: "#bae755",
+                                borderWidth : 0.7,
+                                backgroundColor: "#bae755",
+                                tension: 0,
+                                pointRadius: 1,
+                                pointHitRadius: 300
+                            }],
+                        },
+                        
+                        options: {
+                            plugins: {
+                                zoom: {
+                                    pan: {
+                                        enabled: true,
+                                        mode: "xy"
+                                    },
+                                    limits: {
+                                        y: {min: 0, max: 100},
+                                    },
+                                    zoom: {
+                                        wheel: {
+                                            enabled: true
+                                        }
                                     }
                                 }
+                            },
+                            animation: true,
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    min: 0,
+                                    max: 100
+                                }
                             }
-                        })
+                        }
                     }
 
+                var ctx = document.getElementById("cpuchart").getContext("2d");
+                var cpuchartelement = new Chart(ctx, config);
+                    
                     // var openDB = new XMLHttpRequest()
                     // var DBpath = "../../../Backend/DB/" + $("#FileSelect option:selected").val();
                     // openDB.open("GET", DBpath, false);
                     // openDB.onreadystatechange = function () {
-                    //     if(openDB.readyState === 4) {
-                    //         if(openDB.status === 200 || openDB.status == 0) {
-    
-                    //             var lines = openDB.responseText.split("\n");
+                        //     if(openDB.readyState === 4) {
+                            //         if(openDB.status === 200 || openDB.status == 0) {
+                                
+                                //             var lines = openDB.responseText.split("\n");
                     //             for(var i = 0;i < lines.length;i++) {
                     //                 if(lines === 1) {
                     //                     console.log(lines[1])
@@ -181,7 +184,7 @@
                     //     }
                     // }
                     // openDB.send(null);
-                })
+                
                 
                 
 
