@@ -1,5 +1,5 @@
 import React from "react";
-import "./App.css";
+import "./styles.css";
 
 import { Line } from "react-chartjs-2";
 
