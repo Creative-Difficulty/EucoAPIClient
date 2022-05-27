@@ -169,3 +169,7 @@ input:checked + .slider:before {
   padding-top: 70px;
   font-family: 'Ubuntu', sans-serif;
 }
+
+#cpudiv #empty_file {
+  font-family: 'Ubuntu', sans-serif;
+}
