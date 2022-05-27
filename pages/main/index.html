@@ -45,32 +45,109 @@
                 <div id="min_cpu_usage"></div>
                 <div id="cpu_speed"></div>
             </div>
+            <p id="empty_file"></p>
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
             
             <script>
+                $("#empty_file").hide();
                 var Chartlabels = [];
                 var Chartvalues = [];
+                var FilesinDB = [];
+
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: Chartlabels,
+                        datasets: [{
+                            label: "CPU usage",
+                            data: Chartvalues,
+                            fill: false,
+                            borderColor: "#bae755",
+                            borderWidth : 0.7,
+                            backgroundColor: "#bae755",
+                            tension: 0,
+                            pointRadius: 1,
+                            pointHitRadius: 300
+                        }],
+                    },
+                    
+                    options: {
+                        plugins: {
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: "xy"
+                                },
+                                limits: {
+                                    y: {min: 0, max: 100},
+                                },
+                                zoom: {
+                                    wheel: {
+                                        enabled: true
+                                    }
+                                }
+                            }
+                        },
+                        animation: true,
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 100
+                            }
+                        }
+                    }
+                }
                 
-                
+                var ctx = document.getElementById("cpuchart").getContext("2d");
+                var cpuchartelement = new Chart(ctx, config);
+
                 $.get("/DBList", (data) => {
-                    for(let i=0; i<data.length; i++) {
-                        if(data.length < 1 || data.length < 0) {
-                            $("#FileSelect").append(new Option("No Database Files", "no_db"))
-                            return;
-                        } else {
+                    if(data.length < 1 || data.length < 0  || data === undefined  || data === null) {
+                        $("#FileSelect").append(new Option("No Database Files", "no_db"))
+                    } else if(data.length > 0){
+                        for(let i=0; i<data.length; i++) {
                             $("#FileSelect").append(new Option(data[i].replace(".txt", ""), data[i]))
+                            FilesinDB.push(data[i]);
                         }
                     }
                 });
+
+                // for(let i=0; i<FilesinDB.length; i++) {
+                //     var DBpath = "/DB/" + FilesinDB[i];
+                //     $.get(DBpath, (data) => {
+                //         Chartlabels = [];
+                //         Chartvalues = [];
+                //         if(data.length > 0) {
+                //             var lines = data.split("\n");
+                //             for(var i = 0;i < lines.length;i++) {
+                //                 var values = lines[i].split(",")
+                //                 for(let i = 0;i < values.length;i++) {
+                //                     if(values[i].includes("cpu_usage=")) {
+                //                         Chartvalues.push(values[i].split("=")[1])
+                //                     }
+                //                     if(values[i].includes("time=")) {
+                //                         Chartlabels.push(values[i].split("=")[1])
+                //                     }
+                //                 }
+                //             }
+                //         }
+                //     });
+                // }
+                
                 
                 
                 $("#FileSelect").change(function() {
-                    if($("#FileSelect option:selected").val() !== "none"  || $("#FileSelect option:selected").val() !== "no_db") {
+                    $("#empty_file").hide();
+                    Chartvalues = [];
+                    Chartlabels = [];
+                    if($("#FileSelect option:selected").text() !== "none") {
                         var DBpath = "/DB/" + $("#FileSelect option:selected").val();
                         $.get(DBpath, (data) => {
                             if(data.length > 0) {
                                 var lines = data.split('\n');
-                                for(var i = 0;i < lines.length;i++) {
+                                for(var i = 0; i<lines.length;i++) {
                                     var values = lines[i].split(",")
                                     for(let i = 0;i < values.length;i++) {
                                         if(values[i].includes("cpu_usage=")) {
@@ -81,61 +158,26 @@
                                         }
                                     }
                                 }
+
+                                config.data.datasets[0].data = Chartvalues;
+                                config.data.labels = Chartlabels;
+                                cpuchartelement.update();
                             } else {
-                                document.write("Empty File")
+                                $("#empty_file").show();
+                                document.getElementById("empty_file").innerHTML = "Empty database file";
+                                config.data.datasets[0].data = [];
+                                config.data.labels = [];
+                                cpuchartelement.update();
                             }
+
                         });
+                    } else {
+                        config.data.datasets[0].data = [];
+                        config.data.labels = [];
+                        cpuchartelement.update();
                     }
                 })
 
-                var config = {
-                    type: 'line',
-                        data: {
-                            labels: Chartlabels,
-                            datasets: [{
-                                label: "CPU usage",
-                                data: Chartvalues,
-                                fill: false,
-                                borderColor: "#bae755",
-                                borderWidth : 0.7,
-                                backgroundColor: "#bae755",
-                                tension: 0,
-                                pointRadius: 1,
-                                pointHitRadius: 300
-                            }],
-                        },
-                        
-                        options: {
-                            plugins: {
-                                zoom: {
-                                    pan: {
-                                        enabled: true,
-                                        mode: "xy"
-                                    },
-                                    limits: {
-                                        y: {min: 0, max: 100},
-                                    },
-                                    zoom: {
-                                        wheel: {
-                                            enabled: true
-                                        }
-                                    }
-                                }
-                            },
-                            animation: true,
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    min: 0,
-                                    max: 100
-                                }
-                            }
-                        }
-                    }
-
-                var ctx = document.getElementById("cpuchart").getContext("2d");
-                var cpuchartelement = new Chart(ctx, config);
                     
                     // var openDB = new XMLHttpRequest()
                     // var DBpath = "../../../Backend/DB/" + $("#FileSelect option:selected").val();

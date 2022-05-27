@@ -99,7 +99,7 @@ var parseableData
 
 await fetch("https://eucoapi.herokuapp.com")
 
-setInterval(fetchJSON, 10000)
+setInterval(fetchJSON, 2000)
 const Appendstream = fs.createWriteStream(path.join(__dirname, "pages", "main", "DB", newDBName), {flags:'a'});
 
 
