@@ -45,7 +45,7 @@
                 <div id="min_cpu_usage"></div>
                 <div id="cpu_speed"></div>
             </div>
-            <p id="empty_file"></p>
+            <div id="empty_file"></div>
             <canvas id="cpuchart" width="1000px" height="200px"></canvas>
             
             <script>
@@ -120,6 +120,7 @@
                     Chartvalues = [];
                     Chartlabels = [];
                     if($("#FileSelect option:selected").text() !== "none") {
+                        $("#avg_cpu_usage").show();
                         $("#cpu_model").show();
                         $("#cpu_speed").show();
                         var DBpath = "/DB/" + $("#FileSelect option:selected").val();
@@ -147,6 +148,9 @@
                                         }
                                     }
                                 }
+                                var avg_cpu_usage = (Chartvalues.map(function(i) {return /^\d+(\.\d+)?$/.test(i) ? parseFloat(i) : 0;}).reduce(function(a, b) {return (a + b)}) / Chartvalues.length).toFixed(1);
+
+                                document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage + "%";
 
                                 config.data.datasets[0].data = Chartvalues;
                                 config.data.labels = Chartlabels;
@@ -155,6 +159,7 @@
                                 $("#empty_file").show();
                                 $("#cpu_model").hide();
                                 $("#cpu_speed").hide();
+                                $("#avg_cpu_usage").hide();
                                 document.getElementById("empty_file").innerHTML = "Empty database file";
                                 config.data.datasets[0].data = [];
                                 config.data.labels = [];
@@ -163,6 +168,7 @@
 
                         });
                     } else {
+                        $("#avg_cpu_usage").hide();
                         $("#cpu_model").hide();
                         $("#cpu_speed").hide();
                         config.data.datasets[0].data = [];
