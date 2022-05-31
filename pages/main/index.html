@@ -120,14 +120,17 @@
                     Chartvalues = [];
                     Chartlabels = [];
                     if($("#FileSelect option:selected").text() !== "none") {
-                        $("#avg_cpu_usage").show();
-                        $("#cpu_model").show();
-                        $("#cpu_speed").show();
-                        $("min_cpu_usage").show();
-                        $("max_cpu_usage").show();
                         var DBpath = "/DB/" + $("#FileSelect option:selected").val();
                         $.get(DBpath, (data) => {
                             if(data.length > 0) {
+                                $("max_cpu_usage").show();
+                                $("min_cpu_usage").show();
+                                $("#empty_file").hide();
+                                $("#cpu_model").show();
+                                $("#cpu_speed").show();
+                                $("#avg_cpu_usage").show();
+                                document.getElementById("empty_file").innerHTML = "";
+            
                                 var lines = data.split('\n');
                                 for(var i = 0; i<lines.length;i++) {
                                     var values = lines[i].split(",")
@@ -150,18 +153,16 @@
                                         }
                                     }
                                 }
+        
                                 var maxCPUusage = Math.max.apply(null, Chartvalues);
                                 var minCPUusage = Math.min.apply(null, Chartvalues);
                                 
-                                console.log(Chartvalues.indexOf(Math.max.apply(null, Chartvalues)));
-                                var TimeAtmaxCpuUsage = Chartlabels[Chartvalues.indexOf(Math.max.apply(null, Chartvalues))];
-                                var TimeAtminCpuUsage = Chartlabels[Chartvalues.indexOf(Math.min.apply(null, Chartvalues))]
                                 var avg_cpu_usage = (Chartvalues.map(function(i) {return /^\d+(\.\d+)?$/.test(i) ? parseFloat(i) : 0;}).reduce(function(a, b) {return (a + b)}) / Chartvalues.length).toFixed(1);
                                 
                                 document.getElementById("avg_cpu_usage").innerHTML = "Average CPU usage: " + avg_cpu_usage + "%";
                                 
-                                document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "% " + "@" + TimeAtmaxCpuUsage;
-                                document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "% " + "@" + TimeAtminCpuUsage;
+                                document.getElementById("max_cpu_usage").innerHTML = "Maximum CPU usage: " + maxCPUusage + "%";
+                                document.getElementById("min_cpu_usage").innerHTML = "Minimum CPU usage: " + minCPUusage + "%";
 
                                 config.data.datasets[0].data = Chartvalues;
                                 config.data.labels = Chartlabels;
@@ -186,7 +187,6 @@
                         $("min_cpu_usage").hide();
                         $("#cpu_model").hide();
                         $("#cpu_speed").hide();
-                        $("#avg_cpu_usage").hide();
                         config.data.datasets[0].data = [];
                         config.data.labels = [];
                         cpuchartelement.update();
