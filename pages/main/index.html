@@ -123,9 +123,9 @@
                         var DBpath = "/DB/" + $("#FileSelect option:selected").val();
                         $.get(DBpath, (data) => {
                             if(data.length > 0) {
-                                $("max_cpu_usage").show();
-                                $("min_cpu_usage").show();
                                 $("#empty_file").hide();
+                                $("#max_cpu_usage").show();
+                                $("#min_cpu_usage").show();
                                 $("#cpu_model").show();
                                 $("#cpu_speed").show();
                                 $("#avg_cpu_usage").show();
@@ -169,8 +169,8 @@
                                 cpuchartelement.update();
                             } else {
                                 $("#empty_file").show();
-                                $("max_cpu_usage").hide();
-                                $("min_cpu_usage").hide();
+                                $("#max_cpu_usage").hide();
+                                $("#min_cpu_usage").hide();
                                 $("#cpu_model").hide();
                                 $("#cpu_speed").hide();
                                 $("#avg_cpu_usage").hide();
@@ -182,11 +182,12 @@
 
                         });
                     } else {
-                        $("#avg_cpu_usage").hide();
-                        $("max_cpu_usage").hide();
-                        $("min_cpu_usage").hide();
+                        $("#empty_file").show();
+                        $("#max_cpu_usage").hide();
+                        $("#min_cpu_usage").hide();
                         $("#cpu_model").hide();
                         $("#cpu_speed").hide();
+                        $("#avg_cpu_usage").hide();
                         config.data.datasets[0].data = [];
                         config.data.labels = [];
                         cpuchartelement.update();
