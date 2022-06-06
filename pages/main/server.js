@@ -15,8 +15,8 @@ logger.setLevel("success");
 if (process.env.port != null && !isNaN(parseFloat(process.env.port)) && process.env.port > 0 && process.env.port < 65535) {
   logger.info("Set port to " + process.env.port + ".");
 } else {
-  logger.warn("no port or unavailable port specified, defaulting to 8082."); 
-  process.env.port = 8082;
+  logger.warn("no port or unavailable port specified, defaulting to 8083."); 
+  process.env.port = 8083;
 }
 
 if (process.env.mode === "normal" || process.env.mode === "production" || process.env.mode === "debug") {

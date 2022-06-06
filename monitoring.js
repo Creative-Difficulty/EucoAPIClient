@@ -97,16 +97,14 @@ var LoggedNum = 0
 var recievedJSON
 var parseableData
 
-await fetch("https://eucoapi.herokuapp.com")
-
 setInterval(fetchJSON, 2000)
 const Appendstream = fs.createWriteStream(path.join(__dirname, "pages", "main", "DB", newDBName), {flags:'a'});
 
 
 async function fetchJSON() {
-    await fetch("https://eucoapi.herokuapp.com").then(jsonData => jsonData.json()).then(jsonData => {
-        recievedJSON = jsonData
-    })
+    await fetch("https://localhost:8082", { method: "GET", headers:{
+        "EucoAPIAuth": "IamRobot"
+    }}).then(res => recievedJSON = res.json());
     
     if(LoggedNum > 1) {
         var jsonTime = recievedJSON["time"]
@@ -125,7 +123,7 @@ async function fetchJSON() {
         
         parseableData = "time=" + jsonTime + "," + "cpu_usage=" + jsonCpuUsage + "," + "used_ram=" + jsonUsedRAM + "," + "free_ram=" + jsonFreeRAM + "," + "free_storageGB=" + jsonFreeStorage + "," + "used_storageGB=" + jsonUsedStorage + "\n"
 
-    } else {
+    } else if(LoggedNum === 1) {
         var jsonTime = recievedJSON["time"]
         var jsonCpuUsage = recievedJSON["cpu_usage"]
         
