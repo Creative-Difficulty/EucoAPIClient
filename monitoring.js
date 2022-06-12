@@ -6,6 +6,7 @@ import path from "path";
 import logger from "node-color-log"
 import { exit } from "process";
 import { zip } from "zip-a-folder";
+import {fetchEucoAPI} from "./js/functions.js";
 const __dirname = path.resolve()
 
 logger.setLevel("success")
@@ -101,14 +102,28 @@ setInterval(fetchJSON, 2000)
 const Appendstream = fs.createWriteStream(path.join(__dirname, "pages", "main", "DB", newDBName), {flags:'a'});
 
 
+
+
 async function fetchJSON() {
-    await fetch("https://localhost:8082", { method: "GET", headers:{
-        "EucoAPIAuth": "IamRobot"
-    }}).then(res => recievedJSON = res.json());
+    var recievedJSON = await fetchEucoAPI();
+    //console.log(JSON.parse(JSON.stringify(Buffer.from(recievedJSON, 'base64').toString('utf8'))));
+    if(recievedJSON !== null || recievedJSON !== undefined) {
+        recievedJSON = JSON.parse(JSON.stringify(Buffer.from(recievedJSON, 'base64').toString('utf8')));
+    } else {
+        return;
+    }
+
+    console.log(recievedJSON)
     
-    if(LoggedNum > 1) {
-        var jsonTime = recievedJSON["time"]
-        var jsonCpuUsage = recievedJSON["cpu_usage"]
+    if(LoggedNum > 0) {
+        if(recievedJSON.s === true) {
+            var jsonTime = recievedJSON.t
+            var jsonCpuUsage = recievedJSON.cu
+            var jsonPerformanceMS = recievedJSON.pt
+        } else {
+            return;
+        }
+        
         
         var jsonRAM = recievedJSON["RAM"]
         var jsonUsedRAM = jsonRAM["usedMemMb"]
@@ -123,7 +138,7 @@ async function fetchJSON() {
         
         parseableData = "time=" + jsonTime + "," + "cpu_usage=" + jsonCpuUsage + "," + "used_ram=" + jsonUsedRAM + "," + "free_ram=" + jsonFreeRAM + "," + "free_storageGB=" + jsonFreeStorage + "," + "used_storageGB=" + jsonUsedStorage + "\n"
 
-    } else if(LoggedNum === 1) {
+    } else if(LoggedNum === 0) {
         var jsonTime = recievedJSON["time"]
         var jsonCpuUsage = recievedJSON["cpu_usage"]
         
@@ -162,7 +177,8 @@ async function fetchJSON() {
     LoggedNum++;
     
     
-    
-    Appendstream.write(parseableData)
+    if(parseableData !== null || parseableData !== undefined) {
+        Appendstream.write(parseableData)
+    }
 }
 
