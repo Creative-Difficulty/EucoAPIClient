@@ -13,11 +13,18 @@
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-svelte": "^7.0.0",
     "rollup-plugin-terser": "^7.0.0",
     "svelte": "^3.0.0"
   },
   "dependencies": {
-    "sirv-cli": "^2.0.0"
+    "chart.js": "^3.8.0",
+    "chartjs-plugin-zoom": "^1.2.1",
+    "fs": "^0.0.1-security",
+    "hammerjs": "^2.0.8",
+    "path": "^0.12.7",
+    "sirv-cli": "^2.0.0",
+    "svelte-select": "^4.4.7"
   }
 }
