@@ -1,5 +1,5 @@
 <canvas id="myChart" width="1000px" height="200px"></canvas>
-<script>
+<script context="module">
     import {
         Chart,
         ArcElement,
@@ -55,7 +55,8 @@
         SubTitle
     );
 	import { onMount } from 'svelte';
-    import * as fs from 'fs/promises';
+    import {promises as fsPromises} from 'fs';
+    const {readFile} = fsPromises;
     import path from 'path';
 
     const __dirname = path.resolve()
