@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
+import dotenv from "dotenv";
 import { exit } from "process";
 import fetch from "node-fetch"
-import {fetchEucoAPI} from "./js/functions.js";
+import fetchEucoAPI from "./js/fetchEucoAPI.js";
 //TODO: migrate to react
 import fs from "fs"
 import logger from "node-color-log"
@@ -14,6 +15,8 @@ logger.setLevel("success")
 
 process.argv.shift();
 process.argv.shift();
+
+dotenv.config();
 
 if(process.argv.includes("-help") || process.argv.includes("-h")) {
     console.log(`
@@ -56,8 +59,8 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
                 clearBar.increment(1);
             });
         }
-        //clearBar.stop();
-        //exit(0);
+        clearBar.stop();
+        exit(0);
     });
 
     
@@ -83,37 +86,20 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
 
 var currentdate = new Date();
 var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
-var newDBName = "DB-" + datetime + ".txt";
+var newDBName = "DB-" + datetime + ".json";
 
 fs.open(path.join(__dirname, "pages", "main", "DB", newDBName), 'w', function (err, file) {
     if (err) throw err;
     console.log("Created new database file with name: " + newDBName);
 });
 
-var LoggedNum = 0
-var recievedJSON
-var parseableData
-
-setInterval(fetchJSON, 2000)
+setInterval(fetchJSON, 20000)
 const Appendstream = fs.createWriteStream(path.join(__dirname, "pages", "main", "DB", newDBName), {flags:'a'});
 
 
-
-
 async function fetchJSON() {
-    var recievedJSON = await fetchEucoAPI();
-    //console.log(JSON.parse(JSON.stringify(Buffer.from(recievedJSON, 'base64').toString('utf8'))));
-    if(recievedJSON !== null || recievedJSON !== undefined) {
-        recievedJSON = JSON.parse(JSON.stringify(Buffer.from(recievedJSON, 'base64').toString('utf8')));
-    } else {
-        return;
-    }
-
-    console.log(recievedJSON)
-    
-    
-    if(parseableData !== null || parseableData !== undefined) {
-        Appendstream.write(parseableData)
-    }
+    var recievedJSON = await fetch(process.env.FETCH_URL, { method: "GET", headers: {"authentication": "d81707bf323e2f30085e3562cfd5e5959f679efcb16a3929bb1d9ac5b837652d4fbe4dd6c755196bbdbf4ab6db7cc2f0"}}).then(res => res.text());
+    recievedJSON = JSON.stringify(Buffer.from(recievedJSON, 'base64').toString('utf8'))
+    Appendstream.write(recievedJSON)
 }
 

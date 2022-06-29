@@ -9,6 +9,6 @@ dotenv.config({path: path.join(__dirname, ".env")});
 
 export default async function fetchEucoAPI() {
     
-    var APIresponse = await fetch("http://localhost:8082", { method: "GET", headers: {"EucoAPIAuth": "IamRobot"}}).then(res => res.text());
+    
     return APIresponse;
 }
