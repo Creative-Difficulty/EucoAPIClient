@@ -3,20 +3,21 @@
 import dotenv from "dotenv";
 import { exit } from "process";
 import fetch from "node-fetch"
-import fetchEucoAPI from "./js/fetchEucoAPI.js";
-//TODO: migrate to react
 import fs from "fs"
-import logger from "node-color-log"
+import isValidHttpURL from "./js/isValidHttpURL.j"
+import initLogger from "./lib/util/initLogger.js";
+import log4js from "log4js";
 import path from "path";
 import { zip } from "zip-a-folder";
+
+const logger = log4js.getLogger();
+const LoggerConfig = await initLogger();
+log4js.configure(LoggerConfig)
+
 const __dirname = path.resolve()
 
-logger.setLevel("success")
-
 process.argv.shift();
 process.argv.shift();
-
-dotenv.config();
 
 if(process.argv.includes("-help") || process.argv.includes("-h")) {
     console.log(`
@@ -84,13 +85,24 @@ if(process.argv.includes("-help") || process.argv.includes("-h")) {
     exit(0)
 }
 
+dotenv.config();
+
+if(/\s/.test(process.env.FETCH_URL) || !isValidHttpURL(process.env.FETCH_URL)) {
+    logger.warn("The environment variable FETCH_URL contains a whitespace or isnt properly set, defaulting to http://localhost:8082");
+    process.env.FETCH_URL = "http://localhost:8082"
+}
+if(/\s/.test(process.env.TOKEN) || process.env.TOKEN === undefined || process.env.TOKEN === null) {
+    logger.error("The environment variable TOKEN contains a whitespace or isnt properly set, EucoAPIClient cannot run without it!");
+    exit(1);
+}
+
 var currentdate = new Date();
 var datetime = currentdate.getDate() + "."+(currentdate.getMonth()+1) + "." + currentdate.getFullYear() + "@" + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
 var newDBName = "DB-" + datetime + ".json";
 
 fs.open(path.join(__dirname, "pages", "main", "DB", newDBName), 'w', function (err, file) {
     if (err) throw err;
-    console.log("Created new database file with name: " + newDBName);
+    logger.info("Created new database file with name: " + newDBName);
 });
 
 setInterval(fetchJSON, 20000)

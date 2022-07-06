@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-import express from "express";
-import { isIP } from "net";
-import path from "path";
-import logger from "node-color-log"
+
 import dotenv from "dotenv"
+import express from "express";
 import fs from "fs";
+import { isIP } from "net";
+import logger from "node-color-log"
+import path from "path";
 //TODO: at path /DBList readDirectory DB => display alll files in directory
 const __dirname = path.resolve()
 const configPath = path.join(__dirname + "../../")
@@ -12,19 +13,18 @@ dotenv.config(configPath)
 const app = express();
 logger.setLevel("success");
 
-if (process.env.port != null && !isNaN(parseFloat(process.env.port)) && process.env.port > 0 && process.env.port < 65535) {
-  logger.info("Set port to " + process.env.port + ".");
-} else {
-  logger.warn("no port or unavailable port specified, defaulting to 8083."); 
-  process.env.port = 8083;
+if(process.env.PORT === "" || /\s/.test(process.env.PORT) || process.env.PORT === null || process.env.PORT === undefined || /^\d+$/.test(process.env.PORT)) {
+  logger.warn("The environment variable PORT isnt set or isnt properly set, defaulting to 8083")
+  process.env.PORT = 8083
 }
 
-if (process.env.mode === "normal" || process.env.mode === "production" || process.env.mode === "debug") {
-  logger.info("Set mode to " + process.env.mode + ".");
+if(/\s/.test(process.env.LOGLEVEL) || process.env.LOGLEVEL === "" || process.env.LOGLEVEL !== "WARN" && process.env.LOGLEVEL !== "ALL" && process.env.LOGLEVEL !== "INFO" && process.env.LOGLEVEL !== "ERROR" && process.env.LOGLEVEL !== "DEBUG") {
+    logger.level = "INFO";
+    logger.warn("The environment variable LOGLEVEL isnt set or isnt properly set, defaulting to INFO");
 } else {
-  logger.warn("no mode or corrupted mode specified, defaulting to normal.");
-  process.env.mode = "normal";
+    logger.level = process.env.LOGLEVEL;
 }
+
 
 app.use("/DB", express.static("DB"));
 app.use("/img", express.static(path.join(__dirname, "img")));
@@ -34,7 +34,7 @@ app.use("/lib", express.static(path.join(__dirname, "js")));
 
 
 app.get("/", (req, res) => {
-  if(process.env.mode == "debug") {
+  if(process.env.LOGLEVEL == "DEBUG") {
     var ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress
     if(ip.includes("::1")) {
       logger.debug("request recieved from: localhost\nIP type: IPv6")
