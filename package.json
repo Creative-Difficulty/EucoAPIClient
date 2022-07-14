@@ -24,6 +24,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "fs": "^0.0.1-security",
+    "log4js": "^6.6.0",
     "net": "^1.0.2",
     "node-color-log": "^9.0.0",
     "node-fetch": "^3.2.4",
